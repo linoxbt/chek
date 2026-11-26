@@ -12,7 +12,7 @@ The full design is in the Chek Build Specification v1.0.
 | Phase | Dates (2026) | Status |
 | --- | --- | --- |
 | 0. Foundations: repo, shared encoding library, test vectors, CI | 26–27 Nov | Done |
-| 1. Move package | 27 Nov – 2 Dec | In progress |
+| 1. Move package | 27 Nov – 2 Dec | Contract and 88 unit tests pass; open: gas-equality check (AC10, needs Testnet) and a randomized conservation test |
 | 2. Enclave spike and go/no-go | 26 Nov – 2 Dec | Not started |
 | 3. Snapshot engine | 3–9 Dec | Not started |
 | 4. Runner | 6–11 Dec | Not started |
