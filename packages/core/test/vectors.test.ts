@@ -9,6 +9,10 @@ import {
   leafHash,
   MerkleTree,
   PADDING_LEAF,
+  snapshotPayloadBytes,
+  snapshotSigningBytes,
+  verifySnapshotSignature,
+  type SnapshotPayload,
   parseCanonicalRules,
   toHex,
   verifyProof,
@@ -133,5 +137,30 @@ describe("merkle tree", () => {
   it("a single entrant's root is its leaf hash; an empty tree's root is the padding leaf", () => {
     expect(toHex(new MerkleTree(seq.slice(0, 1)).root)).toBe(toHex(leafHash(seq[0]!)));
     expect(toHex(new MerkleTree([]).root)).toBe(toHex(PADDING_LEAF));
+  });
+});
+
+describe("snapshot payloads", () => {
+  const sv = JSON.parse(readFileSync(resolve(import.meta.dirname, "../../../fixtures/vectors.json"), "utf8")) as {
+    enclave_test_key: { public_key: string };
+    snapshot_payloads: { name: string; payload: SnapshotPayload; payload_bcs: string; signing_bytes: string; signature: string }[];
+  };
+  const pk = fromHex(sv.enclave_test_key.public_key);
+
+  it.each(sv.snapshot_payloads)("$name", ({ payload, payload_bcs, signing_bytes, signature }) => {
+    expect(toHex(snapshotPayloadBytes(payload))).toBe(payload_bcs);
+    expect(toHex(snapshotSigningBytes(payload))).toBe(signing_bytes);
+    expect(verifySnapshotSignature(pk, payload, fromHex(signature))).toBe(true);
+    expect(verifySnapshotSignature(pk, { ...payload, n: payload.n + 1 }, fromHex(signature))).toBe(false);
+    expect(verifySnapshotSignature(pk, { ...payload, fetched_at: "1" }, fromHex(signature))).toBe(false);
+  });
+
+  it("signing bytes are intent 1, then fetched_at, then the payload", () => {
+    const { payload } = sv.snapshot_payloads[0]!;
+    const bytes = snapshotSigningBytes(payload);
+    expect(bytes[0]).toBe(1);
+    const ts = new DataView(bytes.buffer, bytes.byteOffset + 1, 8).getBigUint64(0, true);
+    expect(ts.toString()).toBe(payload.fetched_at);
+    expect(toHex(bytes.slice(9))).toBe(toHex(snapshotPayloadBytes(payload)));
   });
 });

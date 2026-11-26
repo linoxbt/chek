@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Shared Chek encoding: canonical rules JSON, Blake2b-256, BCS leaves, Merkle tree, error map",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -13,6 +15,7 @@
   },
   "dependencies": {
     "@mysten/bcs": "^2.1.4",
+    "@noble/curves": "^2.4.0",
     "@noble/hashes": "^2.4.0"
   },
   "devDependencies": {

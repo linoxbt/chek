@@ -11,10 +11,14 @@ import {
   MerkleTree,
   PADDING_LEAF,
   rulesHash,
+  snapshotPayloadBytes,
+  snapshotSigningBytes,
   toHex,
+  type SnapshotPayload,
   type Leaf,
   type RulesV1,
 } from "../src/index.ts";
+import { ed25519 } from "@noble/curves/ed25519.js";
 import { VECTORS_PATH, writeOrCheck } from "./vectors-lib.ts";
 
 const enc = new TextEncoder();
@@ -147,6 +151,48 @@ const invalidRules: { name: string; text: string }[] = [
   { name: "direct_replies_only as number", text: mut({ direct_replies_only: 0 }) },
 ];
 
+// Test-only enclave key: the same seed as Nautilus's own enclave.move test (0x07 repeated 32 times).
+const TEST_ENCLAVE_SEED = new Uint8Array(32).fill(7);
+
+const payloadBase: SnapshotPayload = {
+  campaign_id: `0x${"c0ffee".padEnd(64, "0")}`,
+  post_id: "1994000000000000000",
+  rules_hash: hex(rulesHash(baseDraw)),
+  opened_at: "1764200000000",
+  closes_at: "1764800000000",
+  mode: 0,
+  k: 3,
+  max_entrants: 5000,
+  max_judged: 1000,
+  max_replies_read: 20000,
+  fetched_at: "1764800600000",
+  n: 200,
+  replies_seen: 312,
+  root: trees.find((t) => t.n === LEAF_COUNT)!.root,
+  snapshot_hash: hex(blake2b256(enc.encode("snapshot document bytes"))),
+  linked: true,
+  post_author_id: "44196397",
+  request_counter: "1",
+};
+
+const payloads: { name: string; payload: SnapshotPayload }[] = [
+  { name: "draw, 200 entrants, linked", payload: payloadBase },
+  {
+    name: "judged, no entrants, unlinked",
+    payload: {
+      ...payloadBase,
+      rules_hash: hex(rulesHash(baseJudged)),
+      mode: 1,
+      k: 100,
+      n: 0,
+      replies_seen: 0,
+      root: hex(PADDING_LEAF),
+      linked: false,
+      request_counter: "18446744073709551615",
+    },
+  },
+];
+
 const vectors = {
   version: 1,
   about:
@@ -163,6 +209,17 @@ const vectors = {
   ],
   leaves: [...edgeLeaves, ...leaves].map((l) => ({ ...l, bcs: hex(leafBytes(l)), hash: hex(leafHash(l)) })),
   trees,
+  enclave_test_key: {
+    seed: hex(TEST_ENCLAVE_SEED),
+    public_key: hex(ed25519.getPublicKey(TEST_ENCLAVE_SEED)),
+  },
+  snapshot_payloads: payloads.map(({ name, payload }) => ({
+    name,
+    payload,
+    payload_bcs: hex(snapshotPayloadBytes(payload)),
+    signing_bytes: hex(snapshotSigningBytes(payload)),
+    signature: hex(ed25519.sign(snapshotSigningBytes(payload), TEST_ENCLAVE_SEED)),
+  })),
 };
 
 writeOrCheck(VECTORS_PATH, `${JSON.stringify(vectors, null, 2)}\n`);

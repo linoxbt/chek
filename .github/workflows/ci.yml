@@ -48,16 +48,16 @@ jobs:
         working-directory: move/chek
     steps:
       - uses: actions/checkout@v4
-      - name: Install Sui CLI (latest testnet release)
+      - name: Install Sui CLI
         env:
           GH_TOKEN: ${{ github.token }}
+          SUI_TAG: testnet-v1.85.1
         run: |
-          tag=$(gh release list -R MystenLabs/sui --limit 100 --json tagName --jq '[.[].tagName | select(startswith("testnet-v"))][0]')
-          echo "Using $tag"
+          tag="$SUI_TAG"
           mkdir -p /tmp/sui
           gh release download "$tag" -R MystenLabs/sui --pattern "sui-$tag-ubuntu-x86_64.tgz" --dir /tmp/sui
           tar -xzf /tmp/sui/*.tgz -C /tmp/sui
           sudo install "$(find /tmp/sui -type f -name sui | head -1)" /usr/local/bin/sui
           sui --version
       - run: sui move build
-      - run: sui move test
+      - run: sui move test --gas-limit 100000000000
