@@ -1,0 +1,6 @@
+[package]
+name = "chek"
+edition = "2024"
+
+[addresses]
+chek = "0x0"

@@ -1,0 +1,24 @@
+{
+  "name": "@chek/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Chek encoding: canonical rules JSON, Blake2b-256, BCS leaves, Merkle tree, error map",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "vectors": "tsx scripts/gen-vectors.ts && tsx scripts/gen-move-tests.ts",
+    "vectors:check": "tsx scripts/gen-vectors.ts --check && tsx scripts/gen-move-tests.ts --check"
+  },
+  "dependencies": {
+    "@mysten/bcs": "^2.1.4",
+    "@noble/hashes": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.11",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.2"
+  }
+}

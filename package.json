@@ -1,0 +1,13 @@
+{
+  "name": "chek",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "vectors": "pnpm --filter @chek/core vectors",
+    "vectors:check": "pnpm --filter @chek/core vectors:check"
+  }
+}
