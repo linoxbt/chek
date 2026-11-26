@@ -1,0 +1,4 @@
+out/
+src/nautilus-server/target/
+secrets.json
+*.env

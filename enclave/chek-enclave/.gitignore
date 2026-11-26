@@ -1,0 +1,7 @@
+out/
+*.env
+user-data.sh
+trust-policy.json
+secrets-policy.json
+secrets.json
+src/nautilus-server/target/

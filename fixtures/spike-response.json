@@ -1,0 +1,22 @@
+{
+  "public_key": "ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c",
+  "response": {
+    "response": {
+      "data": {
+        "anthropic_status": 200,
+        "anthropic_stop_reason": "end_turn",
+        "conversation_is_post": true,
+        "model": "claude-opus-5-5",
+        "post_author_id": "18446744073709551615",
+        "post_id": "1994000000000000123",
+        "x_post_status": 200,
+        "x_search_results": 7,
+        "x_search_status": 200
+      },
+      "intent": 2,
+      "timestamp_ms": 1764800600000
+    },
+    "signature": "eb3ce12d8766815aa398bb9200cd01a0679f8625fe2c50a3bb13ae9dd34e4e5c6fe534d0472aa340f611b5cdb0235fb4734b5040f8b249a97200f9c72bb15a00"
+  },
+  "signing_bytes": "02c01750e69a0100007b0021726f1cac1bc800ffffffffffffffff01c80007000000c80008656e645f7475726e0f636c617564652d6f7075732d352d35"
+}

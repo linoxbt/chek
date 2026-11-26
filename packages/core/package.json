@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "vectors": "tsx scripts/gen-vectors.ts && tsx scripts/gen-move-tests.ts",
-    "vectors:check": "tsx scripts/gen-vectors.ts --check && tsx scripts/gen-move-tests.ts --check"
+    "vectors:check": "tsx scripts/gen-vectors.ts --check && tsx scripts/gen-move-tests.ts --check",
+    "verify-spike": "tsx scripts/verify-spike.ts"
   },
   "dependencies": {
     "@mysten/bcs": "^2.1.4",

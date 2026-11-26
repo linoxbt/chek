@@ -1,0 +1,7 @@
+# Hosts the Chek enclave may reach (spec MD14). configure_enclave.sh maps each one to a local
+# address inside the enclave and a vsock-proxy rule on the host; TLS runs inside the enclave.
+endpoints:
+  - api.x.com
+  - pbs.twimg.com
+  - api.anthropic.com
+  - fullnode.testnet.sui.io

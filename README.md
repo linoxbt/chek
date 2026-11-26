@@ -13,7 +13,7 @@ The full design is in the Chek Build Specification v1.0.
 | --- | --- | --- |
 | 0. Foundations: repo, shared encoding library, test vectors, CI | 26–27 Nov | Done |
 | 1. Move package | 27 Nov – 2 Dec | Contract and 88 unit tests pass; open: gas-equality check (AC10, needs Testnet) and a randomized conservation test |
-| 2. Enclave spike and go/no-go | 26 Nov – 2 Dec | Not started |
+| 2. Enclave spike and go/no-go | 26 Nov – 2 Dec | Code, scripts and runbook ready; the run needs AWS, X and Anthropic accounts ([runbook](docs/enclave-spike.md)) |
 | 3. Snapshot engine | 3–9 Dec | Not started |
 | 4. Runner | 6–11 Dec | Not started |
 | 5. Judged Draw and web app | 10–14 Dec | Not started |
@@ -25,13 +25,15 @@ The full design is in the Chek Build Specification v1.0.
 ```
 packages/core/        TypeScript: canonical rules JSON, Blake2b-256, BCS leaves, Merkle tree, Move error map
 enclave/chek-core/    Rust twin of packages/core, used by the Nautilus enclave
+enclave/chek-enclave/ Nautilus template + the Chek enclave app (Phase 2: /spike)
+deploy/               Testnet/Mainnet publish, enclave config and registration scripts
 move/chek/            Sui Move package: config, enclave_app, snapshot, merkle, campaign
 move/enclave/         Vendored Nautilus enclave package
 fixtures/vectors.json Shared test vectors all three must reproduce
 docs/                 Rules and encoding reference, contract reference
 ```
 
-Later phases add `packages/web`, `packages/runner`, `enclave/chek-enclave` and `deploy/`, as laid
+Later phases add `packages/web` and `packages/runner`, as laid
 out in section 18 of the spec.
 
 ## Develop

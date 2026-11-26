@@ -41,6 +41,22 @@ jobs:
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test
 
+  enclave:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: enclave/chek-enclave/src/nautilus-server
+    steps:
+      - uses: actions/checkout@v4
+      # rust-toolchain.toml in enclave/chek-enclave pins the template's toolchain.
+      - run: rustup toolchain install && rustup show active-toolchain
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: enclave/chek-enclave/src/nautilus-server
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --features chek --all-targets -- -D warnings
+      - run: cargo test --locked --features chek
+
   move:
     runs-on: ubuntu-latest
     defaults:
