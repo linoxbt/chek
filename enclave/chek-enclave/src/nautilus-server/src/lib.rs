@@ -33,6 +33,9 @@ pub struct Secrets {
     pub x_bearer_token: String,
     #[serde(rename = "ANTHROPIC_API_KEY")]
     pub anthropic_api_key: String,
+    /// Shared with the runner: `/snapshot` requires HMAC-SHA256 of the body under this key.
+    #[serde(rename = "ENCLAVE_HMAC_KEY")]
+    pub enclave_hmac_key: String,
 }
 
 impl Secrets {
@@ -48,11 +51,13 @@ impl Secrets {
     }
 }
 
-/// App state: the ephemeral key generated at boot (its public key is in the attestation) and
-/// the API secrets.
+/// App state: the ephemeral key generated at boot (its public key is in the attestation), the
+/// API secrets and the snapshot state.
 pub struct AppState {
     pub eph_kp: Ed25519KeyPair,
     pub secrets: Secrets,
+    #[cfg(feature = "chek")]
+    pub snapshots: app::SnapshotState,
 }
 
 impl IntoResponse for EnclaveError {

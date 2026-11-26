@@ -7,6 +7,7 @@ pub mod hash;
 pub mod json;
 pub mod merkle;
 pub mod rules;
+pub mod snapshot;
 
 pub use canonical::{canonicalize, CanonicalError};
 pub use hash::blake2b256;

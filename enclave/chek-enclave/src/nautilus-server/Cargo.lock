@@ -481,6 +481,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 
 [[package]]
+name = "chek-core"
+version = "0.0.0"
+dependencies = [
+ "bcs",
+ "blake2",
+ "hex",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "chrono"
 version = "0.4.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1506,7 +1517,12 @@ dependencies = [
  "aws-nitro-enclaves-nsm-api",
  "axum",
  "bcs",
+ "bytes",
+ "chek-core",
  "fastcrypto",
+ "futures-util",
+ "hex",
+ "hmac",
  "lazy_static",
  "rand",
  "reqwest",
@@ -1515,6 +1531,7 @@ dependencies = [
  "serde_json",
  "serde_repr",
  "serde_yaml",
+ "sha2 0.10.9",
  "tokio",
  "tower-http",
  "tracing",

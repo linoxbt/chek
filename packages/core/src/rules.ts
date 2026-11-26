@@ -72,7 +72,7 @@ function intInRange(v: unknown, min: number, max: number): boolean {
   return typeof v === "number" && Number.isSafeInteger(v) && v >= min && v <= max;
 }
 
-/** Validates a parsed rules value. The same checks, in the same order, exist in enclave/chek-core. */
+/** Validates a parsed rules value. The same checks, in the same order, exist in enclave/chek-enclave/src/chek-core. */
 export function validateRules(value: unknown): RulesResult {
   const errors: string[] = [];
   if (!isPlainObject(value)) return { ok: false, errors: ["rules: must be an object"] };

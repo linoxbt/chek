@@ -5,7 +5,7 @@
 use anyhow::Result;
 use axum::{routing::get, routing::post, Router};
 use fastcrypto::{ed25519::Ed25519KeyPair, traits::KeyPair};
-use nautilus_server::app::spike;
+use nautilus_server::app::{snapshot, spike, SnapshotState};
 use nautilus_server::common::{get_attestation, health_check};
 use nautilus_server::{AppState, Secrets};
 use std::sync::Arc;
@@ -15,13 +15,18 @@ use tracing::info;
 async fn main() -> Result<()> {
     let eph_kp = Ed25519KeyPair::generate(&mut rand::thread_rng());
     let secrets = Secrets::from_env()?;
-    let state = Arc::new(AppState { eph_kp, secrets });
+    let state = Arc::new(AppState {
+        eph_kp,
+        secrets,
+        snapshots: SnapshotState::default(),
+    });
 
     // No CORS layer: only the runner, on the host's private network, calls this server.
     let app = Router::new()
         .route("/", get(ping))
         .route("/get_attestation", get(get_attestation))
         .route("/health_check", get(health_check))
+        .route("/snapshot", post(snapshot))
         .route("/spike", post(spike))
         .with_state(state);
 

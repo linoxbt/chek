@@ -27,8 +27,11 @@ spike proves it end to end and returns the result signed by the enclave's attest
    object:
 
    ```json
-   {"X_BEARER_TOKEN": "…", "ANTHROPIC_API_KEY": "…"}
+   {"X_BEARER_TOKEN": "…", "ANTHROPIC_API_KEY": "…", "ENCLAVE_HMAC_KEY": "…"}
    ```
+
+   `ENCLAVE_HMAC_KEY` is a random string (e.g. `openssl rand -hex 32`) shared with the runner;
+   `/snapshot` rejects requests without its HMAC. The server will not start without all three.
 
 2. **Launch the instance.** From `enclave/chek-enclave`:
 
@@ -89,4 +92,4 @@ with its own on-chain label, where the runner's key signs snapshots and the Veri
 ## After a go
 
 - Record the result (the signed spike JSON and `deploy/testnet.json`) in the repository.
-- Phase 3 replaces `/spike` with `/snapshot`, which needs the HMAC check from MD14 and AC22.
+- `/snapshot` (Phase 3) is in the same build; see [snapshot-api.md](snapshot-api.md).

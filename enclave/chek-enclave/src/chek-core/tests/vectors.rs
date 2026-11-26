@@ -54,7 +54,7 @@ struct TreeCase {
 }
 
 fn vectors() -> Vectors {
-    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../fixtures/vectors.json");
+    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../fixtures/vectors.json");
     serde_json::from_str(&std::fs::read_to_string(path).expect("read vectors"))
         .expect("parse vectors")
 }
@@ -162,4 +162,40 @@ fn bad_proofs_are_rejected() {
     assert!(!verify_proof(&root, &l, &tampered));
     assert!(!verify_proof(&root, &l, &proof[..proof.len() - 1]));
     assert!(MerkleTree::new(&[seq[1], seq[0]]).is_err());
+}
+
+#[test]
+fn snapshot_payload_bcs_and_signing_bytes_match() {
+    use chek_core::snapshot::SnapshotPayload;
+    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../fixtures/vectors.json");
+    let v: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    for c in v["snapshot_payloads"].as_array().unwrap() {
+        let p = &c["payload"];
+        let s = |k: &str| p[k].as_str().unwrap().to_owned();
+        let n = |k: &str| p[k].as_u64().unwrap();
+        let payload = SnapshotPayload {
+            campaign_id: h32(&s("campaign_id")),
+            post_id: s("post_id").parse().unwrap(),
+            rules_hash: hex::decode(s("rules_hash")).unwrap(),
+            opened_at: s("opened_at").parse().unwrap(),
+            closes_at: s("closes_at").parse().unwrap(),
+            mode: n("mode") as u8,
+            k: n("k") as u16,
+            max_entrants: n("max_entrants") as u32,
+            max_judged: n("max_judged") as u32,
+            max_replies_read: n("max_replies_read") as u32,
+            fetched_at: s("fetched_at").parse().unwrap(),
+            n: n("n") as u32,
+            replies_seen: n("replies_seen") as u32,
+            root: hex::decode(s("root")).unwrap(),
+            snapshot_hash: hex::decode(s("snapshot_hash")).unwrap(),
+            linked: p["linked"].as_bool().unwrap(),
+            post_author_id: s("post_author_id").parse().unwrap(),
+            request_counter: s("request_counter").parse().unwrap(),
+        };
+        let name = c["name"].as_str().unwrap();
+        assert_eq!(hex::encode(payload.bcs()), c["payload_bcs"].as_str().unwrap(), "{name}");
+        assert_eq!(hex::encode(payload.signing_bytes()), c["signing_bytes"].as_str().unwrap(), "{name}");
+        assert_eq!(&payload.to_json(), p, "{name}: JSON shape");
+    }
 }

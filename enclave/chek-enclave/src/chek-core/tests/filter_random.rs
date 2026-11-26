@@ -183,11 +183,11 @@ fn random_cases_match_the_recorded_fixture() {
         .iter()
         .all(|c| !c["expected"]["entrants"].as_array().unwrap().is_empty()));
 
-    let doc = json!({"about": "Seeded random filter cases; outcomes recorded from enclave/chek-core. Checked by packages/core.", "cases": cases});
+    let doc = json!({"about": "Seeded random filter cases; outcomes recorded from enclave/chek-enclave/src/chek-core. Checked by packages/core.", "cases": cases});
     let out = format!("{}\n", serde_json::to_string(&doc).unwrap());
     let path = concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/../../fixtures/filter-random.json"
+        "/../../../../fixtures/filter-random.json"
     );
     if std::env::var("CHEK_WRITE_FIXTURES").is_ok() {
         std::fs::write(path, &out).unwrap();

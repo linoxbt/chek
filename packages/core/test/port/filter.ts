@@ -1,5 +1,5 @@
 /**
- * Test-only TypeScript port of the enclave's rules filter (enclave/chek-core/src/filter.rs).
+ * Test-only TypeScript port of the enclave's rules filter (enclave/chek-enclave/src/chek-core/src/filter.rs).
  * The filter itself exists once, in Rust (spec section 18); this port exists to cross-check it on
  * recorded fixtures. Keep the two in step.
  */

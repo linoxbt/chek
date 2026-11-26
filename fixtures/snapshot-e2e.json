@@ -1,0 +1,43 @@
+{
+  "request": {
+    "campaign_id": "0xc0ffee0000000000000000000000000000000000000000000000000000000000",
+    "closes_at": 1764328021385,
+    "k": 3,
+    "max_entrants": 5000,
+    "max_judged": 1000,
+    "max_replies_read": 20000,
+    "mode": 1,
+    "opened_at": 1764241621385,
+    "post_id": "1994000000000000000",
+    "rules_json": "{\"direct_replies_only\":true,\"entry\":\"reply\",\"exclude_author_ids\":[],\"exclude_post_author\":true,\"min_account_age_days\":30,\"min_followers\":10,\"mode\":\"judged\",\"platform\":\"x\",\"require_media\":false,\"required_text\":[\"#Yeti\"],\"rubric\":{\"model\":\"claude-opus-5-5\",\"prompt\":\"Pass entries with a yeti drawing.\"},\"v\":1}"
+  },
+  "response": {
+    "llm_calls": 3,
+    "payload": {
+      "campaign_id": "0xc0ffee0000000000000000000000000000000000000000000000000000000000",
+      "closes_at": "1764328021385",
+      "fetched_at": "1764328081385",
+      "k": 3,
+      "linked": true,
+      "max_entrants": 5000,
+      "max_judged": 1000,
+      "max_replies_read": 20000,
+      "mode": 1,
+      "n": 2,
+      "opened_at": "1764241621385",
+      "post_author_id": "10",
+      "post_id": "1994000000000000000",
+      "replies_seen": 5,
+      "request_counter": "3",
+      "root": "b1ecf08dc5bdef6b1a5a41c7d4c1b7b9d8668b27ce36d2de2e10a6694c1a041e",
+      "rules_hash": "89fd9568e1fc2097ce0aed361f3434b7809d442fb9621445b624ca7c61100e8f",
+      "snapshot_hash": "4e2a2c833b9d4d5fddc0346e5730a404b16c425bfa542fc5bd29d131e75b1cdf"
+    },
+    "payload_bcs": "c0ffee0000000000000000000000000000000000000000000000000000000000000021726f1cac1b2089fd9568e1fc2097ce0aed361f3434b7809d442fb9621445b624ca7c61100e8f89c1fec49a010000891d25ca9a01000001030088130000e8030000204e0000e90726ca9a010000020000000500000020b1ecf08dc5bdef6b1a5a41c7d4c1b7b9d8668b27ce36d2de2e10a6694c1a041e204e2a2c833b9d4d5fddc0346e5730a404b16c425bfa542fc5bd29d131e75b1cdf010a000000000000000300000000000000",
+    "posts_read": 6,
+    "public_key": "ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c",
+    "signature": "3a22e4758d3a55b938cfec676b31b107b7c53534395ff4d1023ee91b06eeaa12ecf0f2c425fffa91aa8f235b85684d4fb75e082e85895032cff47efdd19b9806",
+    "snapshot_json": "{\"ai\":{\"judged\":3,\"model\":\"claude-opus-5-5\",\"rubric_hash\":\"1a77a3828b6485e66e4665ce9f186ad3dc93ad85fca4a24e558633d4a906954e\"},\"campaign_id\":\"0xc0ffee0000000000000000000000000000000000000000000000000000000000\",\"entrants\":[{\"address\":\"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"author_id\":\"21\",\"handle\":\"user21\",\"i\":0,\"reply_id\":\"1994000000000000001\",\"verdict\":\"pass\",\"via\":\"hex\"},{\"address\":\"0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"author_id\":\"23\",\"handle\":\"user23\",\"i\":1,\"reply_id\":\"1994000000000000003\",\"verdict\":\"pass\",\"via\":\"hex\"}],\"excluded\":[{\"author_id\":\"22\",\"code\":\"AI_FAIL\",\"reason\":\"no drawing\",\"reply_id\":\"1994000000000000002\"},{\"author_id\":\"24\",\"code\":\"SUINS_UNRESOLVED\",\"reply_id\":\"1994000000000000004\"},{\"author_id\":\"25\",\"code\":\"MISSING_TEXT\",\"reply_id\":\"1994000000000000005\"}],\"fetched_at\":1764328081385,\"linked\":true,\"post_author_id\":\"10\",\"post_id\":\"1994000000000000000\",\"posts_read\":6,\"replies_seen\":5,\"rules_hash\":\"89fd9568e1fc2097ce0aed361f3434b7809d442fb9621445b624ca7c61100e8f\",\"users_read\":4,\"v\":1}",
+    "users_read": 4
+  }
+}

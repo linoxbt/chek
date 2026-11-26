@@ -1,7 +1,7 @@
 # Rules and encoding reference
 
 How Chek turns a giveaway's rules and entrant list into bytes. The same rules are implemented
-three times — `packages/core` (TypeScript), `enclave/chek-core` (Rust) and `move/chek` (Move) — and
+three times — `packages/core` (TypeScript), `enclave/chek-enclave/src/chek-core` (Rust) and `move/chek` (Move) — and
 all three are tested against [`fixtures/vectors.json`](../fixtures/vectors.json).
 
 ## Rules document (version 1)
@@ -61,7 +61,7 @@ CI runs `pnpm vectors:check` and fails if either is stale.
 
 ## Entrant filter (Phase 3)
 
-`enclave/chek-core/src/filter.rs` applies the section 10 rules. It does no I/O: the enclave
+`enclave/chek-enclave/src/chek-core/src/filter.rs` applies the section 10 rules. It does no I/O: the enclave
 resolves the SuiNS names `names_to_resolve` lists, calls `select`, sends `to_judge` to the LLM
 (Judged Draw), then calls `finalize`. Same inputs, same snapshot.
 

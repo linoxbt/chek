@@ -22,7 +22,7 @@ struct Case {
 fn cases() -> Vec<Case> {
     let path = concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/../../fixtures/filter-cases.json"
+        "/../../../../fixtures/filter-cases.json"
     );
     let v: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
     serde_json::from_value(v["cases"].clone()).unwrap()

@@ -28,6 +28,12 @@ nsm_api = { git = "https://github.com/aws/aws-nitro-enclaves-nsm-api.git/", rev 
 bcs = "0.1.6"
 lazy_static = "1.4"
 uuid = { version = "1.0", features = ["v4"] }
+chek-core = { path = "../chek-core" }
+hmac = "0.12"
+sha2 = "0.10"
+futures-util = { version = "0.3", default-features = false, features = ["alloc"] }
+bytes = "1"
+hex = "0.4"
 
 [features]
 chek = []

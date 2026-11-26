@@ -28,15 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: enclave/chek-core
+        working-directory: enclave/chek-enclave/src/chek-core
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy, rustfmt
+      # enclave/chek-enclave/rust-toolchain.toml pins the toolchain for this crate too.
+      - run: rustup toolchain install && rustup show active-toolchain
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: enclave/chek-core
+          workspaces: enclave/chek-enclave/src/chek-core
       - run: cargo fmt --check
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test

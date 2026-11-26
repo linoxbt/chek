@@ -14,7 +14,7 @@ The full design is in the Chek Build Specification v1.0.
 | 0. Foundations: repo, shared encoding library, test vectors, CI | 26–27 Nov | Done |
 | 1. Move package | 27 Nov – 2 Dec | Contract and 88 unit tests pass; open: gas-equality check (AC10, needs Testnet) and a randomized conservation test |
 | 2. Enclave spike and go/no-go | 26 Nov – 2 Dec | Code, scripts and runbook ready; the run needs AWS, X and Anthropic accounts ([runbook](docs/enclave-spike.md)) |
-| 3. Snapshot engine | 3–9 Dec | In progress: rules filter done (13 reason codes, Rust + TS cross-check); next: X client, SuiNS, judge, snapshot document, `/snapshot` |
+| 3. Snapshot engine | 3–9 Dec | Code complete and tested with mocks ([API](docs/snapshot-api.md)); live run needs the Phase 2 enclave and API accounts |
 | 4. Runner | 6–11 Dec | Not started |
 | 5. Judged Draw and web app | 10–14 Dec | Not started |
 | 6. Testnet hardening | 12–16 Dec | Not started |
@@ -24,8 +24,7 @@ The full design is in the Chek Build Specification v1.0.
 
 ```
 packages/core/        TypeScript: canonical rules JSON, Blake2b-256, BCS leaves, Merkle tree, Move error map
-enclave/chek-core/    Rust twin of packages/core, used by the Nautilus enclave
-enclave/chek-enclave/ Nautilus template + the Chek enclave app (Phase 2: /spike)
+enclave/chek-enclave/ Nautilus template + Chek enclave app; src/chek-core is the Rust twin of packages/core
 deploy/               Testnet/Mainnet publish, enclave config and registration scripts
 move/chek/            Sui Move package: config, enclave_app, snapshot, merkle, campaign
 move/enclave/         Vendored Nautilus enclave package
@@ -43,7 +42,7 @@ Requirements: Node 20+, pnpm 10, Rust stable, and the Sui CLI for Move.
 ```sh
 pnpm install
 pnpm typecheck && pnpm test          # TypeScript
-(cd enclave/chek-core && cargo test)  # Rust
+(cd enclave/chek-enclave/src/chek-core && cargo test)  # Rust
 (cd move/chek && sui move test)       # Move
 pnpm vectors                          # regenerate shared vectors after changing an encoding
 ```
