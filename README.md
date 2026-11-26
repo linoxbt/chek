@@ -14,7 +14,7 @@ The full design is in the Chek Build Specification v1.0.
 | 0. Foundations: repo, shared encoding library, test vectors, CI | 26–27 Nov | Done |
 | 1. Move package | 27 Nov – 2 Dec | Contract and 88 unit tests pass; open: gas-equality check (AC10, needs Testnet) and a randomized conservation test |
 | 2. Enclave spike and go/no-go | 26 Nov – 2 Dec | Code, scripts and runbook ready; the run needs AWS, X and Anthropic accounts ([runbook](docs/enclave-spike.md)) |
-| 3. Snapshot engine | 3–9 Dec | Not started |
+| 3. Snapshot engine | 3–9 Dec | In progress: rules filter done (13 reason codes, Rust + TS cross-check); next: X client, SuiNS, judge, snapshot document, `/snapshot` |
 | 4. Runner | 6–11 Dec | Not started |
 | 5. Judged Draw and web app | 10–14 Dec | Not started |
 | 6. Testnet hardening | 12–16 Dec | Not started |

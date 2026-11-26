@@ -2,7 +2,9 @@
 //! `packages/core`, and both are checked against `fixtures/vectors.json`.
 
 pub mod canonical;
+pub mod filter;
 pub mod hash;
+pub mod json;
 pub mod merkle;
 pub mod rules;
 
