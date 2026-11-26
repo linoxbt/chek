@@ -54,7 +54,10 @@ struct TreeCase {
 }
 
 fn vectors() -> Vectors {
-    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../fixtures/vectors.json");
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../fixtures/vectors.json"
+    );
     serde_json::from_str(&std::fs::read_to_string(path).expect("read vectors"))
         .expect("parse vectors")
 }
@@ -167,7 +170,10 @@ fn bad_proofs_are_rejected() {
 #[test]
 fn snapshot_payload_bcs_and_signing_bytes_match() {
     use chek_core::snapshot::SnapshotPayload;
-    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../fixtures/vectors.json");
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../../../fixtures/vectors.json"
+    );
     let v: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
     for c in v["snapshot_payloads"].as_array().unwrap() {
         let p = &c["payload"];
@@ -194,8 +200,16 @@ fn snapshot_payload_bcs_and_signing_bytes_match() {
             request_counter: s("request_counter").parse().unwrap(),
         };
         let name = c["name"].as_str().unwrap();
-        assert_eq!(hex::encode(payload.bcs()), c["payload_bcs"].as_str().unwrap(), "{name}");
-        assert_eq!(hex::encode(payload.signing_bytes()), c["signing_bytes"].as_str().unwrap(), "{name}");
+        assert_eq!(
+            hex::encode(payload.bcs()),
+            c["payload_bcs"].as_str().unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            hex::encode(payload.signing_bytes()),
+            c["signing_bytes"].as_str().unwrap(),
+            "{name}"
+        );
         assert_eq!(&payload.to_json(), p, "{name}: JSON shape");
     }
 }

@@ -51,8 +51,12 @@ impl SnapshotPayload {
     /// BCS(IntentMessage { intent: 1, timestamp_ms: fetched_at, payload }): what the enclave signs
     /// and `enclave::verify_signature` checks.
     pub fn signing_bytes(&self) -> Vec<u8> {
-        bcs::to_bytes(&IntentMessage { intent: SNAPSHOT_INTENT, timestamp_ms: self.fetched_at, payload: self })
-            .expect("intent message always serialises")
+        bcs::to_bytes(&IntentMessage {
+            intent: SNAPSHOT_INTENT,
+            timestamp_ms: self.fetched_at,
+            payload: self,
+        })
+        .expect("intent message always serialises")
     }
 
     /// The JSON shape `packages/core` reads: 64-bit integers as decimal strings, bytes as hex.
@@ -141,7 +145,10 @@ pub fn build_snapshot(facts: &SnapshotFacts, outcome: &Outcome) -> BuiltSnapshot
         .map(|e| Leaf {
             i: e.i,
             author_id: e.author_id,
-            address: hex::decode(&e.address[2..]).expect("hex").try_into().expect("32 bytes"),
+            address: hex::decode(&e.address[2..])
+                .expect("hex")
+                .try_into()
+                .expect("32 bytes"),
         })
         .collect();
     let tree = MerkleTree::new(&leaves).expect("entrants are indexed in order");
