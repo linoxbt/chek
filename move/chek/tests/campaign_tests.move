@@ -82,6 +82,11 @@ fun finish(sc: Scenario, clock: Clock) {
 
 fun post_at(t: u64): u64 { (t - X_EPOCH_MS) << 22 }
 
+/// The test clock can only move forward; asking for a time already reached is a no-op.
+fun set_time(clock: &mut Clock, t: u64) {
+    if (t > clock.timestamp_ms()) clock.set_for_testing(t);
+}
+
 fun new_campaign<C>(
     sc: &mut Scenario,
     clock: &Clock,
@@ -155,7 +160,7 @@ fun take_cap(sc: &Scenario, id: ID): OrganizerCap {
 }
 
 fun open_at(sc: &mut Scenario, clock: &mut Clock, id: ID, now: u64, posted: u64) {
-    clock.set_for_testing(now);
+    set_time(clock, now);
     sc.next_tx(ORG);
     let mut c = take(sc, id);
     let cap = take_cap(sc, id);
@@ -203,7 +208,7 @@ fun payload(c: &Campaign<SUI>, n: u32): SnapshotPayload {
 
 /// Commits `p` at time `now` through the post-signature path.
 fun commit_payload(sc: &mut Scenario, clock: &mut Clock, c: &mut Campaign<SUI>, p: SnapshotPayload, now: u64) {
-    clock.set_for_testing(now);
+    set_time(clock, now);
     let version = campaign::enclave_version(c);
     campaign::commit_verified_for_testing(c, object::id_from_address(@0xE1), version, p, b"walrus-snapshot", clock, sc.ctx());
 }
@@ -344,6 +349,7 @@ fun create_accepts_k_1_and_100_and_close_bounds() {
     sc.next_tx(ORG);
     let (c, cap) = new_campaign<SUI>(&mut sc, &clock, DRAW, 1, T0 + 10 * MINUTE, COIN);
     keep(c, cap);
+    sc.next_tx(ORG);
     let (c, cap) = new_campaign<SUI>(&mut sc, &clock, JUDGED, 100, T0 + 30 * DAY, COIN);
     keep(c, cap);
     finish(sc, clock);
@@ -535,6 +541,7 @@ fun fund_rejects_another_campaigns_cap() {
     let (mut sc, clock) = begin();
     sc.next_tx(ORG);
     let (mut a, cap_a) = new_campaign<SUI>(&mut sc, &clock, DRAW, 1, CLOSE, COIN);
+    sc.next_tx(ORG);
     let (b, cap_b) = new_campaign<SUI>(&mut sc, &clock, DRAW, 1, CLOSE, COIN);
     campaign::fund_coin(&mut a, &cap_b, coin::mint_for_testing(1, sc.ctx()));
     keep(a, cap_a);
@@ -675,8 +682,12 @@ fun commit_at(fetched_at: u64, now: u64) {
 }
 
 #[test]
-fun commit_accepts_window_edges() {
+fun commit_accepts_fetch_and_commit_at_close() {
     commit_at(CLOSE, CLOSE);
+}
+
+#[test]
+fun commit_accepts_last_fetch_and_commit_moments() {
     commit_at(CLOSE + 6 * HOUR, CLOSE + 48 * HOUR);
 }
 
@@ -789,7 +800,7 @@ fun commit_rejects_a_bad_signature() {
     let (mut sc, mut clock) = begin();
     let id = coin_campaign(&mut sc, &clock, DRAW, 1, 5);
     open(&mut sc, &mut clock, id);
-    clock.set_for_testing(CLOSE + HOUR);
+    set_time(&mut clock, CLOSE + HOUR);
     sc.next_tx(OTHER);
     let mut c = take(&sc, id);
     let e = enclave::new_enclave_for_testing<CHEK>(TEST_PK, sc.ctx());
@@ -806,7 +817,7 @@ fun commit_rejects_an_enclave_from_another_config_version() {
     let (mut sc, mut clock) = begin();
     let id = coin_campaign(&mut sc, &clock, DRAW, 1, 5);
     open(&mut sc, &mut clock, id);
-    clock.set_for_testing(CLOSE + HOUR);
+    set_time(&mut clock, CLOSE + HOUR);
     sc.next_tx(OTHER);
     let mut c = take(&sc, id);
     let p = payload(&c, 5);
@@ -941,17 +952,26 @@ fun reclaim_with_nothing_unused_aborts() {
 
 #[test]
 fun prize_is_conserved_for_every_k_and_n() {
-    let sizes = vector[0, 1, 2, 3, 5];
-    let mut k = 1;
+    let (mut sc, mut clock) = begin();
+    let sizes = vector[0u32, 1, 2, 3, 5];
+    let mut base = T0;
+    let mut k = 1u16;
     while (k <= 3) {
         let mut s = 0;
         while (s < sizes.length()) {
             let n = sizes[s];
-            let (mut sc, mut clock) = begin();
             let pool = 7 * (k as u64);
-            let id = coin_campaign(&mut sc, &clock, DRAW, k, pool);
-            open(&mut sc, &mut clock, id);
-            commit(&mut sc, &mut clock, id, n);
+            set_time(&mut clock, base);
+            sc.next_tx(ORG);
+            let (mut c, cap) = new_campaign<SUI>(&mut sc, &clock, DRAW, k, base + DAY, COIN);
+            campaign::fund_coin(&mut c, &cap, coin::mint_for_testing(pool, sc.ctx()));
+            let id = keep(c, cap);
+            open_at(&mut sc, &mut clock, id, base + MINUTE, base + 1000);
+            sc.next_tx(OTHER);
+            let mut c = take(&sc, id);
+            let p = payload_with(&c, n, n + 7, base + DAY + 30 * MINUTE, test_entrants::root(n as u64));
+            commit_payload(&mut sc, &mut clock, &mut c, p, base + DAY + HOUR);
+            ts::return_shared(c);
             if (n > 0) {
                 draw(&mut sc, id);
                 sc.next_tx(OTHER);
@@ -975,11 +995,12 @@ fun prize_is_conserved_for_every_k_and_n() {
             assert!(campaign::status(&c) == S_SETTLED);
             assert!(campaign::pool_value(&c) == 0);
             ts::return_shared(c);
-            finish(sc, clock);
+            base = base + 3 * DAY;
             s = s + 1;
         };
         k = k + 1;
     };
+    finish(sc, clock);
 }
 
 // === AC9: draw once ===
@@ -1101,7 +1122,7 @@ fun expire_at_48_hours_is_too_early() {
     let (mut sc, mut clock) = begin();
     let id = coin_campaign(&mut sc, &clock, DRAW, 1, 5);
     open(&mut sc, &mut clock, id);
-    clock.set_for_testing(CLOSE + 48 * HOUR);
+    set_time(&mut clock, CLOSE + 48 * HOUR);
     sc.next_tx(OTHER);
     let mut c = take(&sc, id);
     campaign::expire(&mut c, &clock, sc.ctx());
@@ -1114,7 +1135,7 @@ fun expire_after_48_hours_refunds() {
     let (mut sc, mut clock) = begin();
     let id = coin_campaign(&mut sc, &clock, DRAW, 1, 5);
     open(&mut sc, &mut clock, id);
-    clock.set_for_testing(CLOSE + 48 * HOUR + 1);
+    set_time(&mut clock, CLOSE + 48 * HOUR + 1);
     sc.next_tx(OTHER);
     let mut c = take(&sc, id);
     campaign::expire(&mut c, &clock, sc.ctx());
@@ -1128,7 +1149,7 @@ fun expire_after_48_hours_refunds() {
 fun expire_a_draft_aborts() {
     let (mut sc, mut clock) = begin();
     let id = coin_campaign(&mut sc, &clock, DRAW, 1, 5);
-    clock.set_for_testing(CLOSE + 49 * HOUR);
+    set_time(&mut clock, CLOSE + 49 * HOUR);
     sc.next_tx(OTHER);
     let mut c = take(&sc, id);
     campaign::expire(&mut c, &clock, sc.ctx());
@@ -1141,7 +1162,7 @@ fun commit_after_expiry_aborts() {
     let (mut sc, mut clock) = begin();
     let id = coin_campaign(&mut sc, &clock, DRAW, 1, 5);
     open(&mut sc, &mut clock, id);
-    clock.set_for_testing(CLOSE + 49 * HOUR);
+    set_time(&mut clock, CLOSE + 49 * HOUR);
     sc.next_tx(OTHER);
     let mut c = take(&sc, id);
     campaign::expire(&mut c, &clock, sc.ctx());

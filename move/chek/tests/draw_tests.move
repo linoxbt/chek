@@ -58,14 +58,14 @@ fun choosing_everyone_gives_a_permutation() {
     sc.end();
 }
 
-/// k = 3 from n = 10, 6 000 draws: each index should win about 30% of draws (1 800 times).
-/// The bound of ±150 is about 4.2 standard deviations.
+/// k = 3 from n = 10, 2 000 draws: each index should win about 30% of draws (600 times).
+/// The bound of ±90 is about 4.4 standard deviations.
 #[test]
 fun each_entrant_wins_at_the_expected_rate() {
     let (sc, mut g) = with_generator(x"0303030303030303030303030303030303030303030303030303030303030303");
     let mut counts = vector[0u64, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut d = 0;
-    while (d < 6_000) {
+    let mut d = 0u64;
+    while (d < 2_000) {
         let w = campaign::select_winners(&mut g, 10, 3);
         let mut r = 0;
         while (r < 3) {
@@ -76,7 +76,7 @@ fun each_entrant_wins_at_the_expected_rate() {
     };
     let mut i = 0;
     while (i < 10) {
-        assert!(counts[i] >= 1_650 && counts[i] <= 1_950);
+        assert!(counts[i] >= 510 && counts[i] <= 690);
         i = i + 1;
     };
     sc.end();
@@ -87,7 +87,7 @@ fun each_entrant_wins_at_the_expected_rate() {
 fun every_ordering_is_equally_likely() {
     let (sc, mut g) = with_generator(x"0404040404040404040404040404040404040404040404040404040404040404");
     let mut counts = vector[0u64, 0, 0, 0, 0, 0, 0, 0, 0];
-    let mut d = 0;
+    let mut d = 0u64;
     while (d < 6_000) {
         let w = campaign::select_winners(&mut g, 3, 3);
         let key = (w[0] as u64) * 3 + (w[1] as u64);

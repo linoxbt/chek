@@ -15,6 +15,7 @@ export const MOVE_ERRORS = {
   13: { name: "EBadProof", message: "That entrant is not the winner for this rank." },
   14: { name: "EPaid", message: "This prize has already been paid." },
   15: { name: "ENothingUnused", message: "There is no unused prize to reclaim." },
+  16: { name: "EWrongEnclave", message: "The snapshot was signed by an enclave build registered after this giveaway was created." },
 } as const satisfies Record<number, { name: string; message: string }>;
 
 export type MoveErrorCode = keyof typeof MOVE_ERRORS;

@@ -207,7 +207,7 @@ public fun create<C>(
     assert!(mode == MODE_DRAW || mode == MODE_JUDGED, EBadParam);
     assert!(prize_kind == PRIZE_COIN || prize_kind == PRIZE_OBJECTS, EBadParam);
     assert!(
-        prize_kind == PRIZE_COIN || type_name::get<C>() == type_name::get<SUI>(),
+        prize_kind == PRIZE_COIN || type_name::with_defining_ids<C>() == type_name::with_defining_ids<SUI>(),
         EBadParam,
     );
     assert!(k >= 1 && k <= K_MAX, EBadParam);
@@ -283,7 +283,7 @@ public fun deposit_object<C, P: key + store>(c: &mut Campaign<C>, cap: &Organize
     assert!(c.status == STATUS_DRAFT, EWrongState);
     assert!(c.prize_kind == PRIZE_OBJECTS, EWrongPrize);
     assert!(c.deposited < c.k, EWrongPrize);
-    let t = type_name::get<P>();
+    let t = type_name::with_defining_ids<P>();
     if (c.prize_type.is_some()) {
         assert!(*c.prize_type.borrow() == t, EWrongPrize);
     } else {
@@ -599,7 +599,7 @@ fun assert_organizer<C>(c: &Campaign<C>, cap: &OrganizerCap) {
 
 fun assert_object_type<C, P>(c: &Campaign<C>) {
     assert!(c.prize_kind == PRIZE_OBJECTS, EWrongPrize);
-    assert!(c.prize_type.is_some() && *c.prize_type.borrow() == type_name::get<P>(), EWrongPrize);
+    assert!(c.prize_type.is_some() && *c.prize_type.borrow() == type_name::with_defining_ids<P>(), EWrongPrize);
 }
 
 fun check_winner<C>(

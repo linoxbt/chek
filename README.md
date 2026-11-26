@@ -12,7 +12,7 @@ The full design is in the Chek Build Specification v1.0.
 | Phase | Dates (2026) | Status |
 | --- | --- | --- |
 | 0. Foundations: repo, shared encoding library, test vectors, CI | 26–27 Nov | Done |
-| 1. Move package | 27 Nov – 2 Dec | Not started |
+| 1. Move package | 27 Nov – 2 Dec | In progress |
 | 2. Enclave spike and go/no-go | 26 Nov – 2 Dec | Not started |
 | 3. Snapshot engine | 3–9 Dec | Not started |
 | 4. Runner | 6–11 Dec | Not started |
@@ -25,9 +25,10 @@ The full design is in the Chek Build Specification v1.0.
 ```
 packages/core/        TypeScript: canonical rules JSON, Blake2b-256, BCS leaves, Merkle tree, Move error map
 enclave/chek-core/    Rust twin of packages/core, used by the Nautilus enclave
-move/chek/            Sui Move package (Phase 0: chek::merkle)
+move/chek/            Sui Move package: config, enclave_app, snapshot, merkle, campaign
+move/enclave/         Vendored Nautilus enclave package
 fixtures/vectors.json Shared test vectors all three must reproduce
-docs/                 Rules and encoding reference
+docs/                 Rules and encoding reference, contract reference
 ```
 
 Later phases add `packages/web`, `packages/runner`, `enclave/chek-enclave` and `deploy/`, as laid
