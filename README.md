@@ -15,7 +15,7 @@ The full design is in the Chek Build Specification v1.0.
 | 1. Move package | 27 Nov – 2 Dec | Contract and 88 unit tests pass; open: gas-equality check (AC10, needs Testnet) and a randomized conservation test |
 | 2. Enclave spike and go/no-go | 26 Nov – 2 Dec | Code, scripts and runbook ready; the run needs AWS, X and Anthropic accounts ([runbook](docs/enclave-spike.md)) |
 | 3. Snapshot engine | 3–9 Dec | Code complete and tested with mocks ([API](docs/snapshot-api.md)); live run needs the Phase 2 enclave and API accounts |
-| 4. Runner | 6–11 Dec | Not started |
+| 4. Runner | 6–11 Dec | Code complete, tested with fakes ([docs](docs/runner.md)); live run needs Testnet deploy and enclave |
 | 5. Judged Draw and web app | 10–14 Dec | Not started |
 | 6. Testnet hardening | 12–16 Dec | Not started |
 | 7. Mainnet and submission | 16–28 Dec | Not started |
@@ -23,7 +23,8 @@ The full design is in the Chek Build Specification v1.0.
 ## Repository layout
 
 ```
-packages/core/        TypeScript: canonical rules JSON, Blake2b-256, BCS leaves, Merkle tree, Move error map
+packages/core/        TypeScript: canonical rules JSON, Blake2b-256, BCS leaves, Merkle tree, Move error map, Verify checks
+packages/runner/      Node service: snapshot, Walrus upload, commit, draw, payouts, refunds
 enclave/chek-enclave/ Nautilus template + Chek enclave app; src/chek-core is the Rust twin of packages/core
 deploy/               Testnet/Mainnet publish, enclave config and registration scripts
 move/chek/            Sui Move package: config, enclave_app, snapshot, merkle, campaign
@@ -32,7 +33,7 @@ fixtures/vectors.json Shared test vectors all three must reproduce
 docs/                 Rules and encoding reference, contract reference
 ```
 
-Later phases add `packages/web` and `packages/runner`, as laid
+Later phases add `packages/web`, as laid
 out in section 18 of the spec.
 
 ## Develop
