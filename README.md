@@ -7,6 +7,8 @@ every step.
 
 The full design is in the Chek Build Specification v1.0.
 
+**Live demo:** https://chek-giveaways.netlify.app (demo data until the Testnet deployment; the Verify checks run for real).
+
 ## Build phases
 
 | Phase | Dates (2026) | Status |
