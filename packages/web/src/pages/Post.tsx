@@ -23,11 +23,11 @@ export function Post() {
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  if (q.isPending) return <Loading what="the giveaway" />;
-  if (q.error) return <ErrorBox error={q.error} />;
+  if (q.isPending) return <div className="wrap section-sm"><Loading what="the giveaway" /></div>;
+  if (q.error) return <div className="wrap section-sm"><ErrorBox error={q.error} /></div>;
   const { c, cap } = q.data;
   if (c.status !== Status.DRAFT) {
-    return <p>This giveaway is already open. <Link to={`/g/${id}`}>View it</Link>.</p>;
+    return <p className="wrap section-sm">This giveaway is already open. <Link to={`/g/${id}`}>View it</Link>.</p>;
   }
 
   const link = giveawayLink(config.linkOrigin, c.id);
@@ -56,9 +56,10 @@ export function Post() {
   }
 
   return (
-    <article className="post">
-      <h1>Post it on X</h1>
-      <p>The prize is locked. Now post the giveaway from your X account. The post must contain this link, so anyone can tell this giveaway is the one it announced.</p>
+    <article className="post wrap">
+      <p className="eyebrow">Step 2 of 2 · prize locked</p>
+      <h1 className="page-title">Post it on X.</h1>
+      <p className="lede">The prize is locked. Now post the giveaway from your X account. The post must contain this link, so anyone can tell this giveaway is the one it announced.</p>
       <Field label="Your giveaway link">
         <div className="copyrow"><code>{link}</code><Copy text={link} /></div>
       </Field>
@@ -67,10 +68,10 @@ export function Post() {
       </Field>
       <div className="row">
         <Copy text={text} label="Copy text" />
-        <a className="button" href={`https://x.com/intent/post?text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer">Post on X</a>
+        <a className="pill lime" href={`https://x.com/intent/post?text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer">Post on X</a>
       </div>
 
-      <h2>Then paste the post's link</h2>
+      <h2 className="h3 gap-top">Then paste the post's link</h2>
       <Field label="Post link" hint="Opening starts the giveaway. Replies to this post count until it closes.">
         <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://x.com/you/status/…" />
       </Field>
@@ -82,8 +83,8 @@ export function Post() {
         <p>Only the organizer's wallet can open this giveaway. Connect it to continue.</p>
       ) : (
         <div className="row">
-          <button type="button" disabled={!postId || !!urlProblem || busy} onClick={() => void run("open")}>Open giveaway</button>
-          <button type="button" className="ghost" disabled={busy} onClick={() => void run("cancel")}>Cancel and refund</button>
+          <button type="button" className="pill lime" disabled={!postId || !!urlProblem || busy} onClick={() => void run("open")}>Open giveaway</button>
+          <button type="button" className="pill outline" disabled={busy} onClick={() => void run("cancel")}>Cancel and refund</button>
         </div>
       )}
     </article>

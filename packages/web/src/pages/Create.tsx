@@ -69,8 +69,10 @@ export function Create() {
 
   const cost = estimateXCostUsd(500);
   return (
-    <form className="create" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
-      <h1>Create a giveaway</h1>
+    <form className="create wrap" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
+      <p className="eyebrow">New giveaway</p>
+      <h1 className="page-title">Lock a prize. Let the chain pick.</h1>
+      <p className="lede">Set the prize and the rules. The rules are published to Walrus and their hash is locked into the giveaway, so they can't change later.</p>
       <fieldset>
         <legend>How winners are picked</legend>
         <div className="toggle" role="radiogroup">
@@ -136,7 +138,7 @@ export function Create() {
         </Field>
       </fieldset>
 
-      <section className="summary">
+      <section className="panel pad summary">
         <p>
           Chek fee: <strong>{fee.data === undefined ? "…" : `${fmtSui(fee.data)} SUI`}</strong> plus gas. The X data for a snapshot of 500 replies costs Chek
           about ${cost.low.toFixed(2)}–${cost.high.toFixed(2)}.
@@ -151,7 +153,7 @@ export function Create() {
         ) : !account ? (
           <p>Connect a wallet to create.</p>
         ) : (
-          <button type="submit" disabled={problems.length > 0 || busy !== null}>{busy ?? "Create and lock prize"}</button>
+          <button type="submit" className="pill lime" disabled={problems.length > 0 || busy !== null}>{busy ?? "Create and lock prize"}</button>
         )}
       </section>
     </form>

@@ -5,71 +5,76 @@ import { Mode, Status } from "@chek/core";
 import { lookupEntrant, verifyCampaign, type VerifyReport } from "../lib/verify-page.ts";
 import { explorerObj, explorerTx, reader, short, xPost } from "../lib/app.ts";
 import { ErrorBox, Loading, modeName, prizeText, StatusBadge, when } from "../components/bits.tsx";
+import { ProofPanel } from "../components/ProofPanel.tsx";
+import { ArrowUpRight, CheckMark, CrossMark } from "../components/icons.tsx";
 
 export function Verify() {
   const { id = "" } = useParams();
   const q = useQuery({ queryKey: ["verify", id], queryFn: () => verifyCampaign(reader, id) });
-  if (q.isPending) return <Loading what="the giveaway and running checks" />;
-  if (q.error) return <ErrorBox error={q.error} />;
+  if (q.isPending) return <div className="wrap section-sm"><Loading what="the giveaway and running checks" /></div>;
+  if (q.error) return <div className="wrap section-sm"><ErrorBox error={q.error} /></div>;
   const r = q.data;
   const c = r.campaign;
   return (
-    <article className="verify">
+    <article className="verify wrap">
       <div className="row">
         <StatusBadge status={c.status} />
         <span className="muted small">{modeName(c.mode)}</span>
       </div>
-      <h1>{prizeText(c)} for {c.k} winner{c.k === 1 ? "" : "s"}</h1>
-      <p className="lead">{summary(r)}</p>
-      <dl className="facts">
-        <dt>Post</dt>
-        <dd>{c.postId !== "0" ? <a href={xPost(c.postId)}>View on X</a> : "Not posted yet"}</dd>
-        <dt>Closes</dt>
-        <dd>{when(c.closesAt)}</dd>
-        <dt>Giveaway</dt>
-        <dd><a href={explorerObj(c.id)}>{short(c.id)}</a></dd>
-      </dl>
+      <h1 className="page-title">{prizeText(c)} for {c.k} winner{c.k === 1 ? "" : "s"}</h1>
+      <p className="lede">{summary(r)}</p>
+      <div className="actions">
+        {c.postId !== "0" && <a className="pill outline small" href={xPost(c.postId)}>View post on X <ArrowUpRight /></a>}
+        <a className="pill outline small" href={explorerObj(c.id)}>Giveaway on Sui <ArrowUpRight /></a>
+      </div>
 
-      {r.doc && <Lookup report={r} />}
+      <ProofPanel report={r} />
 
-      {r.winners.length > 0 && (
-        <section>
-          <h2>Winners</h2>
-          <ol className="winners">
-            {r.winners.map((w) => (
-              <li key={w.rank}>
-                <span className="rank">#{w.rank}</span>
-                <span>
-                  <strong>@{w.entrant?.handle ?? "?"}</strong>
-                  <span className="mono small">{w.entrant ? short(w.entrant.address) : ""}</span>
-                </span>
-                <span className="small">
-                  {w.payout ? <a href={explorerTx(w.payout.digest)}>Paid</a> : c.paid[w.rank - 1] ? "Paid" : "Pending"}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
+      <div className="two">
+        {r.doc && <Lookup report={r} />}
+        {r.winners.length > 0 && (
+          <section className="panel pad">
+            <h2 className="h3">Winners</h2>
+            <ol className="winners">
+              {r.winners.map((w) => (
+                <li key={w.rank}>
+                  <span className="num">{String(w.rank).padStart(2, "0")}</span>
+                  <span className="who">
+                    <strong>@{w.entrant?.handle ?? "?"}</strong>
+                    <span className="mono muted small">{w.entrant ? short(w.entrant.address) : ""}</span>
+                  </span>
+                  <span className="small">
+                    {w.payout ? <a href={explorerTx(w.payout.digest)}>Paid</a> : c.paid[w.rank - 1] ? "Paid" : <span className="muted">Pending</span>}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+      </div>
 
-      <section>
-        <h2>Checks</h2>
-        <p className="muted small">Your browser ran these just now, using only the Sui chain and Walrus storage. Chek's servers were not asked.</p>
-        <ul className="checks">
-          {r.checks.map((k) => (
+      <section className="section-sm">
+        <p className="eyebrow">Checked in your browser</p>
+        <h2>Every step, verified.</h2>
+        <p className="muted">These checks ran just now using only the Sui chain and Walrus storage. Chek's servers were not asked anything.</p>
+        <ol className="checks">
+          {r.checks.map((k, i) => (
             <li key={k.id} className={k.state}>
-              <span className="icon" aria-label={k.state}>{k.state === "pass" ? "✓" : k.state === "fail" ? "✕" : "…"}</span>
+              <span className="num">{String(i + 1).padStart(2, "0")}</span>
               <div>
-                <strong>{k.title}</strong>
+                <h3>
+                  {k.title}
+                  <span className={`state ${k.state}`} aria-label={k.state}>{k.state === "pass" ? <CheckMark /> : k.state === "fail" ? <CrossMark /> : "…"}</span>
+                </h3>
                 <p>{k.detail}</p>
               </div>
             </li>
           ))}
-        </ul>
+        </ol>
       </section>
 
       {r.enclave && (
-        <details className="tech">
+        <details className="panel pad tech">
           <summary>Technical details</summary>
           <dl>
             <dt>Enclave</dt>
@@ -90,12 +95,12 @@ export function Verify() {
             <dt>Snapshot file</dt>
             <dd className="mono">{c.snapshot?.blobId}</dd>
           </dl>
-          <p className="small">
-            To compare PCRs with a build of the published source, see <a href="https://github.com/linoxbt/chek/blob/main/docs/enclave-spike.md">the reproducible build guide</a>.
+          <p className="small muted">
+            To compare the PCRs with a build of the published source, see <a href="https://github.com/linoxbt/chek/blob/main/docs/enclave-spike.md">the reproducible build guide</a>.
           </p>
         </details>
       )}
-      <p><Link to="/">← All giveaways</Link></p>
+      <p className="back"><Link to="/">← All giveaways</Link></p>
     </article>
   );
 }
@@ -120,8 +125,8 @@ function Lookup({ report }: { report: VerifyReport }) {
   const [q, setQ] = useState("");
   const res = q ? lookupEntrant(report.doc!, report.campaign.winners, q) : null;
   return (
-    <section className="lookup">
-      <h2>Was I counted?</h2>
+    <section className="panel pad lookup">
+      <h2 className="h3">Was I counted?</h2>
       <input placeholder="@handle, Sui address or your reply's link" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Find an entry" />
       {res?.kind === "entrant" && (
         <p className="good">

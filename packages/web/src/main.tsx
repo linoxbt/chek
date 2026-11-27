@@ -10,6 +10,7 @@ import { Create } from "./pages/Create.tsx";
 import { Post } from "./pages/Post.tsx";
 import { Verify } from "./pages/Verify.tsx";
 import { Mine } from "./pages/Mine.tsx";
+import "@fontsource-variable/inter";
 import "./styles.css";
 
 const router = createBrowserRouter([

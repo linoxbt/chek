@@ -2,6 +2,12 @@
 
 React + Vite. Pages:
 
+The visual design follows the Veyra crypto template on the Framer Marketplace (dark ink-green surfaces, lime accent,
+Clash Grotesk headings, Inter body, overview panel, numbered steps, lime call-to-action band), rebuilt in plain CSS
+(`src/styles.css`) with Chek's own content, icons and components. No template assets or copy are used. Inter is bundled
+from `@fontsource-variable/inter`; Clash Grotesk is free from Fontshare and loaded from their CDN.
+
+
 | Route | Page |
 | --- | --- |
 | `/` | All giveaways (Created events → Campaign objects) |
@@ -35,7 +41,7 @@ Build-time `VITE_*` variables (`src/lib/config.ts`): `VITE_NETWORK`, `VITE_SUI_G
 
 With no `VITE_PACKAGE_ID`, or with `VITE_DEMO=1`, the app runs on **demo data**: a settled Judged Draw built from
 `fixtures/snapshot-e2e.json`, which the Rust enclave pipeline produced in its tests, plus an open giveaway and a draft.
-The checks run for real on that data. Demo mode makes no network calls and turns off creating and opening.
+The checks run for real on that data. Demo mode makes no chain or Walrus calls (only the Clash Grotesk font loads from Fontshare) and turns off creating and opening.
 
 ## Known limits
 

@@ -5,7 +5,7 @@ import { fmtSui } from "../lib/app.ts";
 
 export function StatusBadge({ status }: { status: number }) {
   const tone = status === Status.SETTLED ? "good" : status === Status.EXPIRED || status === Status.CANCELLED ? "muted" : status === Status.OPEN ? "live" : "info";
-  return <span className={`badge ${tone}`}>{STATUS_TEXT[status] ?? `Status ${status}`}</span>;
+  return <span className={`badge ${tone}`}><i aria-hidden />{STATUS_TEXT[status] ?? `Status ${status}`}</span>;
 }
 
 export const modeName = (mode: number) => (mode === Mode.JUDGED ? "Judged Draw" : "Random Draw");
@@ -26,7 +26,7 @@ export function Copy({ text, label = "Copy" }: { text: string; label?: string })
   return (
     <button
       type="button"
-      className="ghost small"
+      className="pill outline small"
       onClick={() => {
         void navigator.clipboard?.writeText(text).then(() => {
           setDone(true);
