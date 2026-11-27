@@ -6,7 +6,7 @@ import {
   type SnapshotDocument,
   type SnapshotResponse,
 } from "@chek/core";
-import { PRIZE_OBJECTS, Status, type Campaign } from "./campaign.ts";
+import { PRIZE_OBJECTS, Status, type Campaign } from "@chek/core";
 import { plan, type Action } from "./plan.ts";
 import { EnclaveError, TxFailed, type Alerts, type BlobStore, type Chain, type Enclave, type SnapshotRequest } from "./ports.ts";
 import type { RunnerState, StateStore } from "./state.ts";

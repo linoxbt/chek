@@ -7,3 +7,4 @@ export * from "./errors.ts";
 export * from "./snapshot.ts";
 export * from "./spike.ts";
 export * from "./verify.ts";
+export * from "./campaign.ts";

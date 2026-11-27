@@ -3,7 +3,7 @@ import { SuiGrpcClient } from "@mysten/sui/grpc";
 import type { Keypair } from "@mysten/sui/cryptography";
 import type { Transaction } from "@mysten/sui/transactions";
 import type { SnapshotResponse } from "@chek/core";
-import { EnclaveBcs, parseCampaign, type Campaign } from "./campaign.ts";
+import { EnclaveBcs, parseCampaign, type Campaign } from "@chek/core";
 import { EnclaveError, TxFailed, type Alerts, type BlobStore, type Chain, type Enclave, type SnapshotRequest } from "./ports.ts";
 
 export class GrpcChain implements Chain {

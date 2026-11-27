@@ -21,6 +21,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test
+      - name: Web app builds
+        run: pnpm --filter @chek/web build
       - name: Vectors and generated Move tests are up to date
         run: pnpm vectors:check
 

@@ -1,6 +1,6 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { fromHex, MerkleTree, type SnapshotDocument, type SnapshotPayload } from "@chek/core";
-import type { Campaign } from "./campaign.ts";
+import type { Campaign } from "@chek/core";
 import { BATCH } from "./plan.ts";
 
 export const CLOCK = "0x6";

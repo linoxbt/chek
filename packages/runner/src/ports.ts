@@ -1,6 +1,6 @@
 import type { Transaction } from "@mysten/sui/transactions";
 import type { SnapshotResponse } from "@chek/core";
-import type { Campaign } from "./campaign.ts";
+import type { Campaign } from "@chek/core";
 
 /** What the runner needs from Sui. */
 export interface Chain {

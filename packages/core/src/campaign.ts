@@ -1,14 +1,12 @@
 import { bcs } from "@mysten/bcs";
-import { toHex } from "@chek/core";
+import { fromHex, toHex } from "./hash.ts";
 
-/** Status codes of chek::campaign. */
-export const Status = { DRAFT: 0, OPEN: 1, COMMITTED: 2, DRAWN: 3, SETTLED: 4, EXPIRED: 5, CANCELLED: 6 } as const;
 export const PRIZE_COIN = 0;
 export const PRIZE_OBJECTS = 1;
 
 const Address = bcs.fixedArray(32, bcs.u8()).transform({
-  input: (hex: string) => Array.from(Buffer.from(hex.replace(/^0x/, "").padStart(64, "0"), "hex")),
-  output: (bytes: number[]) => `0x${Buffer.from(bytes).toString("hex")}`,
+  input: (hex: string) => Array.from(fromHex(hex.replace(/^0x/, "").padStart(64, "0"))),
+  output: (bytes: number[]) => `0x${toHex(Uint8Array.from(bytes))}`,
 });
 const Bytes = bcs.vector(bcs.u8());
 
@@ -101,6 +99,8 @@ export interface Campaign {
     snapshotHash: string;
     blobId: string;
     linked: boolean;
+    /** X user ID of the post's author, as the enclave saw it (decimal string). */
+    postAuthorId: string;
   };
   winners: number[];
   paid: boolean[];
@@ -156,6 +156,7 @@ export function parseCampaign(objectType: string, content: Uint8Array): Campaign
           snapshotHash: toHex(Uint8Array.from(c.snapshot.snapshot_hash)),
           blobId: dec.decode(Uint8Array.from(c.snapshot.blob_id)),
           linked: c.snapshot.linked,
+          postAuthorId: c.snapshot.post_author_id,
         }
       : null,
     winners: c.winners,

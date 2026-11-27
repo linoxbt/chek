@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { Transaction } from "@mysten/sui/transactions";
 import { blake2b256, toHex, type SnapshotResponse } from "@chek/core";
-import { PRIZE_COIN, Status, type Campaign } from "../src/campaign.ts";
+import { PRIZE_COIN, Status, type Campaign } from "@chek/core";
 import { EnclaveError, TxFailed, type Alerts, type BlobStore, type Chain, type Enclave, type SnapshotRequest } from "../src/ports.ts";
 
 export const fixture = JSON.parse(readFileSync(resolve(import.meta.dirname, "../../../fixtures/snapshot-e2e.json"), "utf8")) as {
@@ -99,7 +99,7 @@ export class FakeChain implements Chain {
       if (fn === "commit_snapshot") {
         this.c.status = p.n === 0 ? Status.SETTLED : Status.COMMITTED;
         this.c.snapshot = { enclaveId: ENCLAVE, fetchedAt: Number(p.fetched_at), n: p.n, repliesSeen: p.replies_seen,
-          root: p.root, snapshotHash: p.snapshot_hash, blobId: "snap-blob-1", linked: p.linked };
+          root: p.root, snapshotHash: p.snapshot_hash, blobId: "snap-blob-1", linked: p.linked, postAuthorId: p.post_author_id };
       } else if (fn === "draw") {
         const k = Math.min(this.c.k, this.c.snapshot!.n);
         this.c.status = Status.DRAWN;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Status } from "../src/campaign.ts";
+import { Status } from "@chek/core";
 import { EnclaveError, TxFailed } from "../src/ports.ts";
 import { Runner } from "../src/runner.ts";
 import { MemoryState } from "../src/state.ts";

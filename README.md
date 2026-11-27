@@ -16,7 +16,7 @@ The full design is in the Chek Build Specification v1.0.
 | 2. Enclave spike and go/no-go | 26 Nov – 2 Dec | Code, scripts and runbook ready; the run needs AWS, X and Anthropic accounts ([runbook](docs/enclave-spike.md)) |
 | 3. Snapshot engine | 3–9 Dec | Code complete and tested with mocks ([API](docs/snapshot-api.md)); live run needs the Phase 2 enclave and API accounts |
 | 4. Runner | 6–11 Dec | Code complete, tested with fakes ([docs](docs/runner.md)); live run needs Testnet deploy and enclave |
-| 5. Judged Draw and web app | 10–14 Dec | Not started |
+| 5. Judged Draw and web app | 10–14 Dec | Web app and Verify page done, tested on demo data at 375 px and desktop ([docs](docs/web.md)); live use needs the Testnet deploy |
 | 6. Testnet hardening | 12–16 Dec | Not started |
 | 7. Mainnet and submission | 16–28 Dec | Not started |
 
@@ -24,6 +24,7 @@ The full design is in the Chek Build Specification v1.0.
 
 ```
 packages/core/        TypeScript: canonical rules JSON, Blake2b-256, BCS leaves, Merkle tree, Move error map, Verify checks
+packages/web/         React app: create, post and open giveaways, public list, Verify page
 packages/runner/      Node service: snapshot, Walrus upload, commit, draw, payouts, refunds
 enclave/chek-enclave/ Nautilus template + Chek enclave app; src/chek-core is the Rust twin of packages/core
 deploy/               Testnet/Mainnet publish, enclave config and registration scripts
@@ -32,9 +33,6 @@ move/enclave/         Vendored Nautilus enclave package
 fixtures/vectors.json Shared test vectors all three must reproduce
 docs/                 Rules and encoding reference, contract reference
 ```
-
-Later phases add `packages/web`, as laid
-out in section 18 of the spec.
 
 ## Develop
 
@@ -45,6 +43,7 @@ pnpm install
 pnpm typecheck && pnpm test          # TypeScript
 (cd enclave/chek-enclave/src/chek-core && cargo test)  # Rust
 (cd move/chek && sui move test)       # Move
+pnpm --filter @chek/web dev           # web app on demo data (no env needed)
 pnpm vectors                          # regenerate shared vectors after changing an encoding
 ```
 

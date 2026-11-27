@@ -1,7 +1,7 @@
 import { bcs } from "@mysten/bcs";
 import { describe, expect, it } from "vitest";
 import { blake2b256, fromHex, toHex, verifyProof, type SnapshotDocument } from "@chek/core";
-import { CampaignBcs, coinTypeOf, parseCampaign, PRIZE_OBJECTS, qualifyType, Status } from "../src/campaign.ts";
+import { CampaignBcs, coinTypeOf, parseCampaign, PRIZE_OBJECTS, qualifyType, Status } from "@chek/core";
 import { plan } from "../src/plan.ts";
 import { commitTx, distributeTx, drawTx, refundObjectsTx } from "../src/txs.ts";
 import { calls, campaign, ENCLAVE, fixture, PKG } from "./world.ts";
@@ -55,7 +55,7 @@ describe("plan", () => {
     const obj = { prizeKind: PRIZE_OBJECTS, prizeType: "0x1::a::B" };
     expect(plan(campaign({ ...obj, status: Status.EXPIRED }), 0, false, true).kind).toBe("refund_objects");
     expect(plan(campaign({ ...obj, status: Status.EXPIRED }), 0, false, false).kind).toBe("done");
-    const settledNoEntrants = campaign({ ...obj, status: Status.SETTLED, snapshot: { enclaveId: ENCLAVE, fetchedAt: 0, n: 0, repliesSeen: 0, root: "", snapshotHash: "", blobId: "", linked: false } });
+    const settledNoEntrants = campaign({ ...obj, status: Status.SETTLED, snapshot: { enclaveId: ENCLAVE, fetchedAt: 0, n: 0, repliesSeen: 0, root: "", snapshotHash: "", blobId: "", linked: false, postAuthorId: "0" } });
     expect(plan(settledNoEntrants, 0, false, true).kind).toBe("refund_objects");
   });
 });

@@ -1,4 +1,4 @@
-import { PRIZE_OBJECTS, Status, type Campaign } from "./campaign.ts";
+import { PRIZE_OBJECTS, Status, type Campaign } from "@chek/core";
 
 /** Timing rules from the spec (MD12) and the enclave (30 s settle). */
 export const SETTLE_MS = 30_000;
