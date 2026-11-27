@@ -1,0 +1,25 @@
+# Netlify: the web app (packages/web). Vite env (VITE_*) is set in the Netlify UI per context, not here.
+[build]
+  command = "pnpm install --frozen-lockfile && pnpm --filter @chek/web build"
+  publish = "packages/web/dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Client-side routes (/g/:id, /create, /mine)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
