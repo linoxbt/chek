@@ -8,7 +8,8 @@ import { Tag } from "../components/ui.tsx";
 import { cancelTx, openTx } from "../lib/organizer.ts";
 import { giveawayLink, parsePostUrl, postTimeMs } from "../lib/post.ts";
 import { chainIds, reader } from "../lib/app.ts";
-import { Copy, ErrorBox, Field, Loading, prizeText, when } from "../components/bits.tsx";
+import { Copy, ErrorBox, Field, prizeText, when } from "../components/bits.tsx";
+import { SkeletonPage } from "../components/states.tsx";
 
 export function Post() {
   const { id = "" } = useParams();
@@ -24,7 +25,7 @@ export function Post() {
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  if (q.isPending) return <div className="wrap section-sm"><Loading what="the giveaway" /></div>;
+  if (q.isPending) return <SkeletonPage />;
   if (q.error) return <div className="wrap section-sm"><ErrorBox error={q.error} /></div>;
   const { c, cap } = q.data;
   if (c.status !== Status.DRAFT) {

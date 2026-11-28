@@ -54,7 +54,7 @@ const settled: Campaign = {
   paid: [true, true],
 };
 
-const open: Campaign = { ...settled, id: "0x" + "be".repeat(32), status: Status.OPEN, closesAt: Date.now() + 3 * 3600_000, snapshot: null, winners: [], paid: [], pool: 300_000_000_000n };
+const open: Campaign = { ...settled, id: "0x" + "be".repeat(32), status: Status.OPEN, createdAt: Date.now() - 22 * 3600_000, openedAt: Date.now() - 21 * 3600_000, closesAt: Date.now() + 3 * 3600_000, snapshot: null, winners: [], paid: [], pool: 300_000_000_000n };
 
 const draft: Campaign = { ...open, id: "0x" + "d4".repeat(32), status: Status.DRAFT, postId: "0", openedAt: 0, createdAt: Date.now() - 5 * 60_000 };
 const all = [draft, open, settled];

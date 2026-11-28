@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useLocation } from "react-router";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Status } from "@chek/core";
+import { reader } from "../lib/app.ts";
 import { ConnectButton } from "@mysten/dapp-kit-react/ui";
 import { config } from "../lib/config.ts";
 import { Dot, Logo } from "./ui.tsx";
@@ -79,6 +82,8 @@ export function AppLayout() {
     window.scrollTo(0, 0);
   }, [pathname]);
   const title = TITLES.find(([re]) => re.test(pathname))?.[1] ?? "Chek";
+  const list = useQuery({ queryKey: ["campaigns"], queryFn: () => reader.campaigns() });
+  const openCount = list.data?.filter((c) => c.status === Status.OPEN).length;
 
   return (
     <div className={`app${open ? " nav-open" : ""}`}>
@@ -87,7 +92,7 @@ export function AppLayout() {
         <nav className="side-nav">
           <span className="mono-label">Workspace</span>
           <NavLink to="/app" end><GridIcon />Overview</NavLink>
-          <NavLink to="/giveaways"><ListIcon />Giveaways</NavLink>
+          <NavLink to="/giveaways"><ListIcon />Giveaways{openCount ? <span className="nav-badge" title={`${openCount} open`}>{openCount}</span> : null}</NavLink>
           <NavLink to="/create"><PlusIcon />New giveaway</NavLink>
           <span className="mono-label">Organizer</span>
           <NavLink to="/mine"><UserIcon />My giveaways</NavLink>
@@ -108,6 +113,7 @@ export function AppLayout() {
           </button>
           <Link to="/" className="brand top-brand" aria-label="Chek home"><Logo /></Link>
           <span className="crumb mono"><span className="dim">chek /</span> {title}</span>
+          <GoTo />
           <div className="top-actions">
             {config.demo && <span className="chip mono demo-chip"><Dot tone="warn" /> demo data</span>}
             {!config.demo && <ConnectButton />}
@@ -118,5 +124,30 @@ export function AppLayout() {
         </main>
       </div>
     </div>
+  );
+}
+
+/** Paste a giveaway ID or its link (chek…/g/0x…) to jump straight to it. */
+function GoTo() {
+  const navigate = useNavigate();
+  const [v, setV] = useState("");
+  const [bad, setBad] = useState(false);
+  function submit(e: FormEvent) {
+    e.preventDefault();
+    const m = /(0x[0-9a-fA-F]{1,64})/.exec(v.trim());
+    if (!m) {
+      setBad(true);
+      return;
+    }
+    setBad(false);
+    setV("");
+    navigate(`/g/${m[1]!.toLowerCase()}`);
+  }
+  return (
+    <form className={`goto${bad ? " bad" : ""}`} onSubmit={submit} role="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></svg>
+      <input value={v} onChange={(e) => { setV(e.target.value); setBad(false); }} placeholder="Go to giveaway: paste an ID or link" aria-label="Go to giveaway by ID or link" />
+      <kbd className="mono">↵</kbd>
+    </form>
   );
 }

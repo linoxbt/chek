@@ -4,7 +4,8 @@ import { useCurrentAccount } from "@mysten/dapp-kit-react";
 import { config } from "../lib/config.ts";
 import { GiveawayTable } from "../components/GiveawayTable.tsx";
 import { reader } from "../lib/app.ts";
-import { ErrorBox, Loading } from "../components/bits.tsx";
+import { ErrorBox } from "../components/bits.tsx";
+import { Empty, SkeletonRows } from "../components/states.tsx";
 
 export function Mine() {
   const account = useCurrentAccount();
@@ -28,13 +29,13 @@ export function Mine() {
         <Link className="btn coral small" to="/create">New giveaway <span aria-hidden>→</span></Link>
       </div>
       {!owner ? (
-        <p className="dim">Connect a wallet to see the giveaways you created.</p>
+        <Empty title="Connect a wallet">Giveaways you organize show up here once your wallet is connected.</Empty>
       ) : q.isPending ? (
-        <Loading what="your giveaways" />
+        <SkeletonRows n={3} />
       ) : q.error ? (
         <ErrorBox error={q.error} />
       ) : (
-        <GiveawayTable rows={q.data} draftsToPost empty="None yet. Create one to get started." />
+        <GiveawayTable rows={q.data} draftsToPost empty={{ title: "No giveaways yet", text: "Lock a prize and post it on X in a few minutes.", action: { to: "/create", label: "New giveaway" } }} />
       )}
     </div>
   );
