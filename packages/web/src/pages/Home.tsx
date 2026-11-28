@@ -146,7 +146,7 @@ export function Home() {
             check the result, down to the last reply.
           </p>
           <div className="actions">
-            <Link className="btn coral" to="/create">Create a giveaway <span aria-hidden>→</span></Link>
+            <Link className="btn coral" to="/app">Launch app <span aria-hidden>→</span></Link>
             {featured && <Link className="btn dark" to={`/g/${featured.id}`}>Verify a draw</Link>}
           </div>
         </div>
@@ -163,14 +163,14 @@ export function Home() {
         </div>
       </section>
 
-      <section className="wrap section">
+      <section className="wrap section" id="protocol">
         <Tag>The protocol</Tag>
         <h2>Four guarantees behind every draw.</h2>
         <p className="lede">The prize, the rules, the entrant list and the draw are each locked somewhere you can check, so you don't have to trust the organizer or Chek.</p>
         {proof.data ? <Bento r={proof.data} /> : <p className="dim">Loading the latest verified draw…</p>}
       </section>
 
-      <section className="wrap section">
+      <section className="wrap section" id="how">
         <Tag>How it works</Tag>
         <h2>From post to payout in three steps.</h2>
         <p className="lede">No spreadsheet, no screen recording, no “trust me”.</p>
@@ -200,12 +200,14 @@ export function Home() {
       <section className="wrap section" id="giveaways">
         <Tag>Live board</Tag>
         <h2>Every giveaway, in the open.</h2>
+        <Link className="coral-link" to="/giveaways">Open the full board in the app →</Link>
         {list.isPending && <Loading what="giveaways" />}
         {list.error && <ErrorBox error={list.error} />}
         {list.data?.length === 0 && <p className="dim">No giveaways yet.</p>}
         <ul className="cards">
           {list.data
             ?.filter((c) => c.status !== Status.DRAFT)
+            .slice(0, 6)
             .map((c) => (
               <li key={c.id}>
                 <Link to={`/g/${c.id}`} className="card g-card">
@@ -225,7 +227,7 @@ export function Home() {
         </ul>
       </section>
 
-      <section className="wrap section faq-wrap">
+      <section className="wrap section faq-wrap" id="faq">
         <div className="center-head">
           <Tag>FAQ</Tag>
           <h2>Questions entrants ask first.</h2>

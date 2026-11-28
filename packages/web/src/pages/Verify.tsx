@@ -105,7 +105,7 @@ export function Verify() {
             </p>
           </details>
         )}
-        <p className="back"><Link to="/">← All giveaways</Link></p>
+        <p className="back"><Link to="/giveaways">← All giveaways</Link></p>
       </div>
     </article>
   );

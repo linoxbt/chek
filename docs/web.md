@@ -10,13 +10,21 @@ cards, numbered step cards, a console in a browser-window frame and an FAQ. It i
 funnel and the on-chain trace. Fonts: Plus Jakarta Sans and JetBrains Mono, bundled from `@fontsource-variable`
 (OFL). The template's display face, Pliant, is commercial, so it isn't used.
 
-| Route | Page |
-| --- | --- |
-| `/` | All giveaways (Created events → Campaign objects) |
-| `/create` | Rules form → canonical rules uploaded to Walrus → one transaction: `create`, `fund_coin` or `deposit_object` × k, `share`, cap to sender |
-| `/g/:id/post` | Giveaway link and suggested post text, then paste the post link → `open` (or `cancel`) |
-| `/g/:id` | Verify page: plain-words result, winners, "Was I counted?", and every check |
-| `/mine` | Giveaways whose `OrganizerCap` the connected wallet holds |
+Two layouts. The landing page (`/`) is the marketing site and the only page with a footer. Everything else
+runs inside the app shell: a sidebar (Workspace, Organizer, Resources, network status) and a top bar with the
+wallet button, no footer. On phones the sidebar becomes a drawer.
+
+| Route | Layout | Page |
+| --- | --- | --- |
+| `/` | landing | Hero, the four guarantees (driven by the latest verified draw), how it works, console preview, live board, FAQ |
+| `/app` | app | Overview: open giveaways, SUI locked, payouts, entrants verified, latest verified draw, recent giveaways |
+| `/giveaways` | app | All giveaways with Open / Drawing / Paid out / Refunded tabs |
+| `/create` | app | Rules form → canonical rules uploaded to Walrus → one transaction: `create`, `fund_coin` or `deposit_object` × k, `share`, cap to sender |
+| `/mine` | app | Giveaways whose `OrganizerCap` the connected wallet holds; drafts open on the post step |
+| `/g/:id/post` | app | Giveaway link and suggested post text, then paste the post link → `open` (or `cancel`) |
+| `/g/:id` | app | Verify page: plain-words result, console, winners, "Was I counted?", and every check |
+
+`/g/<id>` is the public link organizers post on X and the enclave checks for (MD9), so it must not move.
 
 ## Verify page checks
 
