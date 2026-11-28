@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCurrentAccount, useDAppKit } from "@mysten/dapp-kit-react";
 import { LIMITS } from "@chek/core";
 import { config } from "../lib/config.ts";
+import { Tag } from "../components/ui.tsx";
 import { buildRules, DEFAULT_FORM, estimateXCostUsd, type RulesForm } from "../lib/rules-form.ts";
 import { createCoinGiveawayTx, createObjectGiveawayTx } from "../lib/organizer.ts";
 import { putBlob } from "../lib/walrus.ts";
@@ -70,7 +71,7 @@ export function Create() {
   const cost = estimateXCostUsd(500);
   return (
     <form className="create wrap" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
-      <p className="eyebrow">New giveaway</p>
+      <Tag>New giveaway</Tag>
       <h1 className="page-title">Lock a prize. Let the chain pick.</h1>
       <p className="lede">Set the prize and the rules. The rules are published to Walrus and their hash is locked into the giveaway, so they can't change later.</p>
       <fieldset>
@@ -138,7 +139,7 @@ export function Create() {
         </Field>
       </fieldset>
 
-      <section className="panel pad summary">
+      <section className="card summary">
         <p>
           Chek fee: <strong>{fee.data === undefined ? "…" : `${fmtSui(fee.data)} SUI`}</strong> plus gas. The X data for a snapshot of 500 replies costs Chek
           about ${cost.low.toFixed(2)}–${cost.high.toFixed(2)}.
@@ -153,7 +154,7 @@ export function Create() {
         ) : !account ? (
           <p>Connect a wallet to create.</p>
         ) : (
-          <button type="submit" className="pill lime" disabled={problems.length > 0 || busy !== null}>{busy ?? "Create and lock prize"}</button>
+          <button type="submit" className="btn coral" disabled={problems.length > 0 || busy !== null}>{busy ?? "Create and lock prize"}</button>
         )}
       </section>
     </form>

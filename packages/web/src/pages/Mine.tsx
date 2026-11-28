@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCurrentAccount } from "@mysten/dapp-kit-react";
 import { Status } from "@chek/core";
 import { config } from "../lib/config.ts";
+import { Tag } from "../components/ui.tsx";
 import { reader } from "../lib/app.ts";
 import { ErrorBox, Loading, prizeText, StatusBadge, when } from "../components/bits.tsx";
 
@@ -23,18 +24,18 @@ export function Mine() {
   if (q.error) return <div className="wrap section-sm"><ErrorBox error={q.error} /></div>;
   return (
     <div className="wrap section-sm">
-      <p className="eyebrow">Organizer</p>
+      <Tag>Organizer</Tag>
       <h1 className="page-title">My giveaways</h1>
       {q.data.length === 0 && <p className="muted">None yet. <Link to="/create">Create one</Link>.</p>}
       <ul className="cards">
         {q.data.map((c) => (
           <li key={c.id}>
-            <div className="card">
+            <div className="card g-card">
               <div className="row"><StatusBadge status={c.status} /></div>
-              <strong className="card-prize">{prizeText(c)}</strong>
+              <strong className="g-prize">{prizeText(c)}</strong>
               <span className="muted small">Closes {when(c.closesAt)}</span>
               <div className="row">
-                {c.status === Status.DRAFT ? <Link className="pill lime small" to={`/g/${c.id}/post`}>Post and open</Link> : <Link className="pill outline small" to={`/g/${c.id}`}>View</Link>}
+                {c.status === Status.DRAFT ? <Link className="btn coral small" to={`/g/${c.id}/post`}>Post and open</Link> : <Link className="btn dark small" to={`/g/${c.id}`}>View</Link>}
               </div>
             </div>
           </li>

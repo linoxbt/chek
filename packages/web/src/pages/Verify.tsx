@@ -5,8 +5,8 @@ import { Mode, Status } from "@chek/core";
 import { lookupEntrant, verifyCampaign, type VerifyReport } from "../lib/verify-page.ts";
 import { explorerObj, explorerTx, reader, short, xPost } from "../lib/app.ts";
 import { ErrorBox, Loading, modeName, prizeText, StatusBadge, when } from "../components/bits.tsx";
-import { ProofPanel } from "../components/ProofPanel.tsx";
-import { ArrowUpRight, CheckMark, CrossMark } from "../components/icons.tsx";
+import { Console } from "../components/Console.tsx";
+import { Dot, StatusWord, Tag } from "../components/ui.tsx";
 
 export function Verify() {
   const { id = "" } = useParams();
@@ -16,91 +16,97 @@ export function Verify() {
   const r = q.data;
   const c = r.campaign;
   return (
-    <article className="verify wrap">
-      <div className="row">
-        <StatusBadge status={c.status} />
-        <span className="muted small">{modeName(c.mode)}</span>
-      </div>
-      <h1 className="page-title">{prizeText(c)} for {c.k} winner{c.k === 1 ? "" : "s"}</h1>
-      <p className="lede">{summary(r)}</p>
-      <div className="actions">
-        {c.postId !== "0" && <a className="pill outline small" href={xPost(c.postId)}>View post on X <ArrowUpRight /></a>}
-        <a className="pill outline small" href={explorerObj(c.id)}>Giveaway on Sui <ArrowUpRight /></a>
-      </div>
+    <article className="verify">
+      <section className="hero hero-sm">
+        <div className="halftone" aria-hidden />
+        <div className="wrap">
+          <div className="row">
+            <StatusBadge status={c.status} />
+            <span className="mono-label">{modeName(c.mode)}</span>
+          </div>
+          <h1 className="page-title">{prizeText(c)} <span className="dim-h">for {c.k} winner{c.k === 1 ? "" : "s"}</span></h1>
+          <p className="lede">{summary(r)}</p>
+          <div className="actions">
+            {c.postId !== "0" && <a className="btn dark small" href={xPost(c.postId)}>Post on X ↗</a>}
+            <a className="btn dark small" href={explorerObj(c.id)}>Giveaway on Sui ↗</a>
+          </div>
+        </div>
+      </section>
 
-      <ProofPanel report={r} />
+      <div className="wrap">
+        <Console report={r} url={`chek-giveaways.netlify.app/g/${short(c.id)}`} chrome={false} />
 
-      <div className="two">
-        {r.doc && <Lookup report={r} />}
-        {r.winners.length > 0 && (
-          <section className="panel pad">
-            <h2 className="h3">Winners</h2>
-            <ol className="winners">
-              {r.winners.map((w) => (
-                <li key={w.rank}>
-                  <span className="num">{String(w.rank).padStart(2, "0")}</span>
-                  <span className="who">
-                    <strong>@{w.entrant?.handle ?? "?"}</strong>
-                    <span className="mono muted small">{w.entrant ? short(w.entrant.address) : ""}</span>
-                  </span>
-                  <span className="small">
-                    {w.payout ? <a href={explorerTx(w.payout.digest)}>Paid</a> : c.paid[w.rank - 1] ? "Paid" : <span className="muted">Pending</span>}
-                  </span>
+        <div className="two">
+          {r.doc && <Lookup report={r} />}
+          {r.winners.length > 0 && (
+            <section className="card">
+              <header className="card-head"><span className="mono-label">Winners</span><span className="mono-label">drawn by Sui Random</span></header>
+              <ol className="winners">
+                {r.winners.map((w) => (
+                  <li key={w.rank}>
+                    <span className="step-num mono small-num">{String(w.rank).padStart(2, "0")}</span>
+                    <span className="who">
+                      <strong>@{w.entrant?.handle ?? "?"}</strong>
+                      <span className="mono dim small">{w.entrant ? short(w.entrant.address) : ""}</span>
+                    </span>
+                    {w.payout ? <a href={explorerTx(w.payout.digest)}><StatusWord tone="ok">paid</StatusWord></a> : <StatusWord tone={c.paid[w.rank - 1] ? "ok" : "warn"}>{c.paid[w.rank - 1] ? "paid" : "pending"}</StatusWord>}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+        </div>
+
+        <section className="section-sm">
+          <Tag>Checked in your browser</Tag>
+          <h2>Every step, verified.</h2>
+          <p className="lede">These ran just now using only the Sui chain and Walrus storage. Chek's servers weren't asked anything.</p>
+          <div className="card checks-card">
+            <header className="card-head"><span className="mono-label">Full trace · {r.checks.length} checks</span><span className={`mono-label ${r.ok ? "ok-label" : "bad-label"}`}><Dot tone={r.ok ? "ok" : "bad"} /> {r.ok ? "all passing" : "attention"}</span></header>
+            <ol className="checks">
+              {r.checks.map((k, i) => (
+                <li key={k.id} className={k.state}>
+                  <span className="mono dim">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <strong>{k.title}</strong>
+                    <p>{k.detail}</p>
+                  </div>
+                  <StatusWord tone={k.state === "pass" ? "ok" : k.state === "fail" ? "bad" : "warn"}>{k.state}</StatusWord>
                 </li>
               ))}
             </ol>
-          </section>
+          </div>
+        </section>
+
+        {r.enclave && (
+          <details className="card tech">
+            <summary>Technical details</summary>
+            <dl>
+              <dt>Enclave</dt>
+              <dd><a href={explorerObj(r.enclave.id)}>{short(r.enclave.id)}</a> (config version {r.enclave.configVersion})</dd>
+              <dt>Enclave key</dt>
+              <dd className="mono">{r.enclave.publicKey}</dd>
+              {r.enclave.config.version === c.enclaveVersion &&
+                r.enclave.config.pcrs.map((p, i) => (
+                  <div key={i} className="contents">
+                    <dt>PCR{i}</dt>
+                    <dd className="mono">{p}</dd>
+                  </div>
+                ))}
+              <dt>Merkle root</dt>
+              <dd className="mono">{c.snapshot?.root}</dd>
+              <dt>Rules</dt>
+              <dd className="mono">{c.rulesBlob} (hash {c.rulesHash})</dd>
+              <dt>Snapshot file</dt>
+              <dd className="mono">{c.snapshot?.blobId}</dd>
+            </dl>
+            <p className="small dim">
+              To compare the PCRs with a build of the published source, see <a href="https://github.com/linoxbt/chek/blob/main/docs/enclave-spike.md">the reproducible build guide</a>.
+            </p>
+          </details>
         )}
+        <p className="back"><Link to="/">← All giveaways</Link></p>
       </div>
-
-      <section className="section-sm">
-        <p className="eyebrow">Checked in your browser</p>
-        <h2>Every step, verified.</h2>
-        <p className="muted">These checks ran just now using only the Sui chain and Walrus storage. Chek's servers were not asked anything.</p>
-        <ol className="checks">
-          {r.checks.map((k, i) => (
-            <li key={k.id} className={k.state}>
-              <span className="num">{String(i + 1).padStart(2, "0")}</span>
-              <div>
-                <h3>
-                  {k.title}
-                  <span className={`state ${k.state}`} aria-label={k.state}>{k.state === "pass" ? <CheckMark /> : k.state === "fail" ? <CrossMark /> : "…"}</span>
-                </h3>
-                <p>{k.detail}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {r.enclave && (
-        <details className="panel pad tech">
-          <summary>Technical details</summary>
-          <dl>
-            <dt>Enclave</dt>
-            <dd><a href={explorerObj(r.enclave.id)}>{short(r.enclave.id)}</a> (config version {r.enclave.configVersion})</dd>
-            <dt>Enclave key</dt>
-            <dd className="mono">{r.enclave.publicKey}</dd>
-            {r.enclave.config.version === c.enclaveVersion &&
-              r.enclave.config.pcrs.map((p, i) => (
-                <div key={i} className="contents">
-                  <dt>PCR{i}</dt>
-                  <dd className="mono">{p}</dd>
-                </div>
-              ))}
-            <dt>Merkle root</dt>
-            <dd className="mono">{c.snapshot?.root}</dd>
-            <dt>Rules</dt>
-            <dd className="mono">{c.rulesBlob} (hash {c.rulesHash})</dd>
-            <dt>Snapshot file</dt>
-            <dd className="mono">{c.snapshot?.blobId}</dd>
-          </dl>
-          <p className="small muted">
-            To compare the PCRs with a build of the published source, see <a href="https://github.com/linoxbt/chek/blob/main/docs/enclave-spike.md">the reproducible build guide</a>.
-          </p>
-        </details>
-      )}
-      <p className="back"><Link to="/">← All giveaways</Link></p>
     </article>
   );
 }
@@ -125,21 +131,21 @@ function Lookup({ report }: { report: VerifyReport }) {
   const [q, setQ] = useState("");
   const res = q ? lookupEntrant(report.doc!, report.campaign.winners, q) : null;
   return (
-    <section className="panel pad lookup">
-      <h2 className="h3">Was I counted?</h2>
+    <section className="card lookup">
+      <header className="card-head"><span className="mono-label">Was I counted?</span><span className="mono-label">search the snapshot</span></header>
       <input placeholder="@handle, Sui address or your reply's link" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Find an entry" />
       {res?.kind === "entrant" && (
-        <p className="good">
+        <p className="ok">
           @{res.entrant.handle} is entrant #{res.entrant.i + 1} with address <span className="mono">{short(res.entrant.address)}</span>
           {res.entrant.via === "suins" ? " (from a SuiNS name)" : ""}.{res.winnerRank ? ` Winner #${res.winnerRank}!` : ""}
         </p>
       )}
       {res?.kind === "excluded" && (
         <p className="bad">
-          That reply was not counted: {res.text} <span className="muted small">({res.code})</span>
+          That reply was not counted: {res.text} <span className="mono dim small">({res.code})</span>
         </p>
       )}
-      {res?.kind === "none" && <p className="muted">No match. If you think your reply was left out, paste its link: excluded replies are listed by link only.</p>}
+      {res?.kind === "none" && <p className="dim">No match. If you think your reply was left out, paste its link: excluded replies are listed by link only.</p>}
     </section>
   );
 }

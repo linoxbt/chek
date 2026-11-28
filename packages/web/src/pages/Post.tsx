@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCurrentAccount, useDAppKit } from "@mysten/dapp-kit-react";
 import { Status } from "@chek/core";
 import { config } from "../lib/config.ts";
+import { Tag } from "../components/ui.tsx";
 import { cancelTx, openTx } from "../lib/organizer.ts";
 import { giveawayLink, parsePostUrl, postTimeMs } from "../lib/post.ts";
 import { chainIds, reader } from "../lib/app.ts";
@@ -57,7 +58,7 @@ export function Post() {
 
   return (
     <article className="post wrap">
-      <p className="eyebrow">Step 2 of 2 · prize locked</p>
+      <Tag>Step 2 of 2 · prize locked</Tag>
       <h1 className="page-title">Post it on X.</h1>
       <p className="lede">The prize is locked. Now post the giveaway from your X account. The post must contain this link, so anyone can tell this giveaway is the one it announced.</p>
       <Field label="Your giveaway link">
@@ -68,7 +69,7 @@ export function Post() {
       </Field>
       <div className="row">
         <Copy text={text} label="Copy text" />
-        <a className="pill lime" href={`https://x.com/intent/post?text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer">Post on X</a>
+        <a className="btn coral" href={`https://x.com/intent/post?text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer">Post on X</a>
       </div>
 
       <h2 className="h3 gap-top">Then paste the post's link</h2>
@@ -83,8 +84,8 @@ export function Post() {
         <p>Only the organizer's wallet can open this giveaway. Connect it to continue.</p>
       ) : (
         <div className="row">
-          <button type="button" className="pill lime" disabled={!postId || !!urlProblem || busy} onClick={() => void run("open")}>Open giveaway</button>
-          <button type="button" className="pill outline" disabled={busy} onClick={() => void run("cancel")}>Cancel and refund</button>
+          <button type="button" className="btn coral" disabled={!postId || !!urlProblem || busy} onClick={() => void run("open")}>Open giveaway</button>
+          <button type="button" className="btn dark" disabled={busy} onClick={() => void run("cancel")}>Cancel and refund</button>
         </div>
       )}
     </article>

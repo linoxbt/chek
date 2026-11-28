@@ -4,7 +4,7 @@ import { STATUS_TEXT } from "../lib/verify-page.ts";
 import { fmtSui } from "../lib/app.ts";
 
 export function StatusBadge({ status }: { status: number }) {
-  const tone = status === Status.SETTLED ? "good" : status === Status.EXPIRED || status === Status.CANCELLED ? "muted" : status === Status.OPEN ? "live" : "info";
+  const tone = status === Status.SETTLED ? "ok" : status === Status.EXPIRED || status === Status.CANCELLED ? "idle" : status === Status.OPEN ? "live" : "warn";
   return <span className={`badge ${tone}`}><i aria-hidden />{STATUS_TEXT[status] ?? `Status ${status}`}</span>;
 }
 
@@ -26,7 +26,7 @@ export function Copy({ text, label = "Copy" }: { text: string; label?: string })
   return (
     <button
       type="button"
-      className="pill outline small"
+      className="btn dark small"
       onClick={() => {
         void navigator.clipboard?.writeText(text).then(() => {
           setDone(true);
